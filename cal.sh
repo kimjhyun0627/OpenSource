@@ -1,9 +1,9 @@
 #!/bin/bash
 
-while read value1; do 
+while read value[0]; do
     continue
 done < num1.txt
-while read value2; do 
+while read value[1]; do
     continue
 done < num2.txt
 
@@ -19,39 +19,39 @@ if [ $# -le 0 ]; then
 
     if [ "$select" -eq 1 ]; then
         param=add
-        res=$(("$value1" + "$value2"))
+        res=$(("${value[0]}" + "${value[1]}"))
     elif [ "$select" -eq 2 ]; then
         param=sub
-        res=$(("$value1" - "$value2"))
+        res=$(("$value[0]" - "$value[1]"))
     elif [ "$select" -eq 3 ]; then
         param=div
-        res=$(("$value1" / "$value2"))
+        res=$(("$value[0]" / "$value[1]"))
     elif [ "$select" -eq 4 ]; then
         param=mod
-        res=$(("$value1" % "$value2"))
+        res=$(("$value[0]" % "$value[1]"))
     fi
 
-    echo "num1 : $value1"
-    echo "num2 : $value2"
+    echo "num1 : ${value[0]}"
+    echo "num2 : ${value[1]}"
     echo "op : $param"
     echo "result : $res"
 else
     if [ "$1" = "add" ]; then
         param=add
-        res=$(("$value1" + "$value2"))
+        res=$(("${value[0]}" + "${value[1]}"))
     elif [ "$1" = "sub" ]; then
         param=sub
-        res=$(("$value1" - "$value2"))
+        res=$(("$value[0]" - "$value[1]"))
     elif [ "$1" = "div" ]; then
         param=div
-        res=$(("$value1" / "$value2"))
+        res=$(("$value[0]" / "$value[1]"))
     elif [ "$1" = "mod" ]; then
         param=mod
-        res=$(("$value1" % "$value2"))
+        res=$(("$value[0]" % "$value[1]"))
     fi
 
-    echo "num1 : $value1"
-    echo "num2 : $value2"
+    echo "num1 : ${value[0]}"
+    echo "num2 : ${value[1]}"
     echo "op : $param"
     echo "result : $res"
 fi
