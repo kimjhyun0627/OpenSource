@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "project management in github"
 while read value[0]; do
     continue
 done < num1.txt
