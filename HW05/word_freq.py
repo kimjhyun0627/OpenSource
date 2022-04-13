@@ -10,7 +10,7 @@ with open(filepath, "r") as file:
     lines = file.readlines()
 
 for ii in lines:
-    ii = re.sub("[-+=!@#$:;%^&*\"~`,.?/]", " ", ii)
+    ii = re.sub("[-+=!@#$:;%^&*_\"~`,.?/]", " ", ii)
     words = ii.split()
     for cnt in words:
         dic[cnt] = dic.get(cnt, 0) + 1
