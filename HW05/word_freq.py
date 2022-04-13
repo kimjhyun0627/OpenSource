@@ -1,13 +1,18 @@
 import sys
+import re
+import operator
 
 filepath = sys.argv[1]
 num = sys.argv[2]
+dic = {}
 
-f = open(filepath, "r")
-lines = f.readlines()
-lines = list(map(lambda s: s.strip(), lines))
+with open(filepath, "r") as file:
+    lines = file.readlines()
 
-for line in lines:
-    print(line)
+for ii in lines:
+    ii=re.sub("[-+=!@#$%^&*\"~`,.?/]"," ",ii)
+    words = ii.split()
+    for cnt in words:
+        dic[cnt] = dic.get(cnt,0)+1
 
-print(num)
+print(dic)
