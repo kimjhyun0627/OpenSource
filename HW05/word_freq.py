@@ -15,4 +15,7 @@ for ii in lines:
     for cnt in words:
         dic[cnt] = dic.get(cnt,0)+1
 
-print(dic)
+dic = sorted(dic.items(), key=operator.itemgetter(1))
+
+for i in range(dic.count(), num):
+    print("%10s %-5s"%(dic[i][0],dic[i][1]))
