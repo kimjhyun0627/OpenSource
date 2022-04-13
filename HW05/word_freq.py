@@ -18,7 +18,6 @@ for ii in input:
 dic = sorted(dic.items(), key=operator.itemgetter(1))
 
 for ii in range(len(dic) - 1, -1, -1):
-    if (dic[ii][1] <= num):
+    if dic[ii][1] <= num:
         break
-
-print("%-10s %5s" % (dic[ii][0], dic[ii][1]))
+    print("%-10s %5s" % (dic[ii][0], dic[ii][1]))
