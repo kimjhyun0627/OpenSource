@@ -1,3 +1,4 @@
+#!usr/bin/python3.9
 
 listA = input("input the 1st list: ")
 listA = list(listA.split())
