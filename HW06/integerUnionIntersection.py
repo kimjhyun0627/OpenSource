@@ -6,7 +6,7 @@ list2 = input("input the 2st list : ")
 list2 = list(list2.split())
 
 listUnion = list1 + list2
-
+listUnion = list(map(int, listUnion))
 listIntersection = []
 
 for ii in range(0, len(listUnion) - 1):
@@ -19,5 +19,6 @@ for ii in listIntersection:
 
 listUnion.sort()
 listIntersection.sort()
+
 print("union :", listUnion)
-print(listIntersection)
+print("intersection :", listIntersection)
