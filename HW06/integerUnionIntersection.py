@@ -1,11 +1,11 @@
 
-list1 = input("input the 1st list : ")
-list1 = list(list1.split())
+listA = input("input the 1st list: ")
+listA = list(listA.split())
 
-list2 = input("input the 2st list : ")
-list2 = list(list2.split())
+listB = input("input the 2st list: ")
+listB = list(listB.split())
 
-listUnion = list1 + list2
+listUnion = listA + listB
 listUnion = list(map(int, listUnion))
 listIntersection = []
 
