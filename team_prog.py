@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import HW06
 while(1):
     num = input("Select menu: 1)b2h 2)integerUnionIntersection 3)fibo 4)exit ? ")
