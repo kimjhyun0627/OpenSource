@@ -16,8 +16,7 @@ echo "$PW" | sudo -kS apt-get install python3-bs4
 
 echo "$PW" | sudo -kS apt-get update
 
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.2.0-linux-x86_64.tar.gz
-tar xvzf elasticsearch-8.2.0-linux-x86_64.tar.gz
-./bin/elasticsearch -d
+chmod 700 runelasticsearch.sh
+./runelasticsearch.sh
 
 python3 app.py
