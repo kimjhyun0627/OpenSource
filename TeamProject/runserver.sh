@@ -20,3 +20,5 @@ chmod 700 runelasticsearch.sh
 ./runelasticsearch.sh
 
 python3 app.py
+
+curl http://localhost:5000
