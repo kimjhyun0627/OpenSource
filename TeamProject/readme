@@ -1,0 +1,4 @@
+chmod +x runserver.sh
+./runserver sh
+하고
+password: sudo 패스워드 입력
