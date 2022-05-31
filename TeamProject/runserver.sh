@@ -17,8 +17,8 @@ echo "$PW" | sudo -kS apt-get install python3-bs4
 echo "$PW" | sudo -kS apt-get update
 
 chmod 700 runelasticsearch.sh
-./runelasticsearch.sh
+#./runelasticsearch.sh
 
 python3 app.py
 
-curl http://localhost:5000
+
