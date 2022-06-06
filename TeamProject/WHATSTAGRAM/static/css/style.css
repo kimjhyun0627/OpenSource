@@ -143,7 +143,7 @@ header.sticky {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 200%;
   display: none;
   background-color: rgba(0, 0, 0, 0.4);
 }
@@ -151,17 +151,14 @@ header.sticky {
 .show {
   display: block;
 }
-.btn{
-  background-color: rgba(0, 0, 0, 0.4);
-}
 
 .modal_body {
   position: absolute;
-  top: 50%;
+  top: 15%;
   left: 50%;
 
-  width: 400px;
-  height: 600px;
+  width: 30%;
+  height: auto;
 
   padding: 40px;
 

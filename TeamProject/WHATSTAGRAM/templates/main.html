@@ -21,7 +21,7 @@
         <div class="nav">
           <ul>
             <li class="text"><a href="#" onclick="location.href='main.html'">HOME</a></li>
-            <li class="text"><button class="btn">CONTACT</button></li>
+            <li class="text"><a href="#" onclick="modalBrowse()">CONTACT</a></li>
           </ul>
         </div>
       </div>
@@ -61,7 +61,7 @@
   <div class="modal">
     <div class="modal_body">
       <div class="title">
-        <h2>모달</h2>
+        <h2 style="Color:Black">모달</h2>
       </div>
       <div class="close-area">X</div>
       <div class="content">
@@ -82,19 +82,14 @@
 
     const body = document.querySelector('body');
     const modal = document.querySelector('.modal');
-    const btnOpenPopup = document.querySelector("header").querySelector(".nav").querySelector("ul").querySelector(".btn");
 
-    console.log(body);
-    console.log(modal);
-    console.log(btnOpenPopup);
-
-    btnOpenPopup.addEventListener('click', () => {
+    function modalBrowse(){
       modal.classList.toggle('show');
 
       if (modal.classList.contains('show')) {
         body.style.overflow = 'hidden';
       }
-    });
+    }
 
     modal.addEventListener('click', (event) => {
       if (event.target === modal) {
