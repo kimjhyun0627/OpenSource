@@ -18,20 +18,20 @@
       <div class="header">
         <a href="#" onclick="location.href='main.html'"><span class="title" style="font-size:3em">#</span>
           <span class="title" style="font-size:2em">Whatstagram</span></a>
-          <div id="modal" class="modal-overlay">
+        <div id="modal" class="modal-overlay">
           <div class="modal-window">
-              <div class="title">
-                  <h2>모달</h2>
-              </div>
-              <div class="close-area">X</div>
-              <div class="content">
-                  <p>가나다라마바사 아자차카타파하</p>
-                  <p>가나다라마바사 아자차카타파하</p>
-                  <p>가나다라마바사 아자차카타파하</p>
-                  <p>가나다라마바사 아자차카타파하</p>
-              </div>
+            <div class="title">
+              <h2>모달</h2>
+            </div>
+            <div class="close-area">X</div>
+            <div class="content">
+              <p>가나다라마바사 아자차카타파하</p>
+              <p>가나다라마바사 아자차카타파하</p>
+              <p>가나다라마바사 아자차카타파하</p>
+              <p>가나다라마바사 아자차카타파하</p>
+            </div>
           </div>
-      </div>
+        </div>
       </div>
     </header>
     <div class="midContainer">
@@ -72,9 +72,33 @@
     })
 
     const loremIpsum = document.getElementById("lorem-ipsum")
-        fetch("https://baconipsum.com/api/?type=all-meat&paras=200&format=html")
-            .then(response => response.text())
-            .then(result => loremIpsum.innerHTML = result)
+    fetch("https://baconipsum.com/api/?type=all-meat&paras=200&format=html")
+      .then(response => response.text())
+      .then(result => loremIpsum.innerHTML = result)
   </script>
 </body>
+<scripts>
+  const body = document.querySelector('body');
+  const modal = document.querySelector('.modal');
+  const btnOpenPopup = document.querySelector('.btn-open-popup');
+
+  btnOpenPopup.addEventListener('click', () => {
+  modal.classList.toggle('show');
+
+  if (modal.classList.contains('show')) {
+  body.style.overflow = 'hidden';
+  }
+  });
+
+  modal.addEventListener('click', (event) => {
+  if (event.target === modal) {
+  modal.classList.toggle('show');
+
+  if (!modal.classList.contains('show')) {
+  body.style.overflow = 'auto';
+  }
+  }
+  });
+</scripts>
+
 </html>
