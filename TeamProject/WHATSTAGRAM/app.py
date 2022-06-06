@@ -8,11 +8,9 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 es_host = "http://localhost:9200"
 
-
 @app.route('/', methods=['GET'])
 def home():
     return render_template('main.html')
-
 
 @app.route('/crawl', methods=['GET', 'POST'])
 def dosomething():

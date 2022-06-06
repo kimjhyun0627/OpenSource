@@ -4,7 +4,7 @@ read -p "슈퍼유저 명령 처리를 위한 사용자 패스워드를 입력�
 
 echo "$PW" | sudo -kS apt-get update
 python3 --version
-echo "$PW" | sudo pip install -r requirements.txt
+echo "$PW" | sudo -kS pip install -r requirements.txt
 pip install selenium
 #echo "$PW" | sudo -kS apt install software-properties-common
 #echo "$PW" | sudo -kS apt install python3.9
