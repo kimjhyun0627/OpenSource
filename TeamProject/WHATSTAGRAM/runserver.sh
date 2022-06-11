@@ -21,7 +21,7 @@ pip install selenium
 
 chmod 700 runelasticsearch.sh
 chmod 700 runbrowser.sh
-
+#testbigbrother
 #./runelasticsearch.sh
 
 gnome-terminal -e ./runelasticsearch.sh
