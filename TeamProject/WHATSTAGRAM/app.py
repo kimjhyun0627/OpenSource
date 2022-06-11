@@ -19,9 +19,13 @@ es_host = "http://localhost:9200"
 
 @app.route('/', methods=['GET'])
 def home():
-    instagram_crawling()
     return render_template('main.html')
 
+
+@app.route('/view', methods=['GET'])
+def crawl():
+    instagram_crawling()
+    #return render_template('#')
 
 # @app.route('/crawl', methods=['GET', 'POST'])
 # def dosomething():
@@ -38,7 +42,8 @@ def instagram_crawling():
     app = Flask(__name__)
 
     # put application's code here
-    word = input("아이디 입력: ")
+    #word = input("아이디 입력: ")
+    word = request.args.get("ID")
     word = str(word)
     url = 'https://www.instagram.com/' + word
 
