@@ -126,6 +126,7 @@ def instagram_crawling():
             print(human_list)
             # 뒤로 가기
             br.back()
+
 #오류1 : 글 자체가 없으면 findAll() 에러
 #오류2 : 게시물 갯수가 적으면 에러
 #오류3 : 비공계 처리 어떻게 할건지
