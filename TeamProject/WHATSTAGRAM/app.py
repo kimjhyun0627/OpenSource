@@ -5,6 +5,9 @@ from selenium.webdriver import ActionChains
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 import time
 import re
 import requests
@@ -16,27 +19,41 @@ es_host = "http://localhost:9200"
 
 @app.route('/', methods=['GET'])
 def home():
-    instagram_crawling()
     return render_template('main.html')
 
+
+@app.route('/view', methods=['GET'])
+def crawl():
+    instagram_crawling()
+    #return render_template('#')
 
 # @app.route('/crawl', methods=['GET', 'POST'])
 # def dosomething():
 #     # TODO: 내용 넣기
 #     return
 
+def set_chrome_driver():
+    chrome_options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    return driver
+
 def instagram_crawling():
     # webdriver 설정하기
     app = Flask(__name__)
 
     # put application's code here
-    word = input("아이디 입력: ")
+    #word = input("아이디 입력: ")
+    word = request.args.get("ID")
     word = str(word)
     url = 'https://www.instagram.com/' + word
 
+    #firefox
     #br = webdriver.Firefox(executable_path=r'./geckodriver')
     #br.get('https://www.instagram.com/')
-    br = webdriver.Chrome()
+
+    #chrome
+    #br = webdriver.Chrome()
+    br = set_chrome_driver()
     br.set_window_size(1500, 1000)
     br.get('https://www.instagram.com/')
     time.sleep(1.5)
@@ -106,10 +123,9 @@ def instagram_crawling():
             print(human_list)
             # 뒤로 가기
             br.back()
-
-    if __name__ == '__main__':
-        app.run()
-
+#오류1 : 글 자체가 없으면 findAll() 에러
+#오류2 : 게시물 갯수가 적으면 에러
+#오류3 : 비공계 처리 어떻게 할건지
 
 if __name__ == "__main__":
     app.run(debug=True)
