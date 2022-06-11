@@ -7,11 +7,11 @@ python3 --version
 echo "$PW" | sudo -kS pip install -r requirements.txt
 pip install -U selenium
 
-# 설치파일 받기
+# 설치파일 받기 -> 나중에 살리기
 #wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
 # 크롬 설치 -> 나중에 살리기
-echo "$PW" | sudo -kS apt install ./google-chrome-stable_current_amd64.deb
+#echo "$PW" | sudo -kS apt install ./google-chrome-stable_current_amd64.deb
 
 # 크롬 버전 확인
 google-chrome --version
@@ -29,7 +29,6 @@ pip install webdriver-manager
 
 echo "$PW" | sudo -kS apt install python3-pip build-essential
 echo "$PW" | pip install requests
-#echo "$PW" | sudo -kS apt install python3-pip build-essential
 
 #echo "$PW" | sudo -kS apt-get update
 #echo "$PW" | sudo -kS apt-get upgrade -y
@@ -42,7 +41,6 @@ echo "$PW" | sudo -kS apt-get update
 chmod 700 runelasticsearch.sh
 chmod 700 runbrowser.sh
 
-=======
 #echo "$PW" | pip install flask
 #echo "$PW" | sudo -kS apt-get install python3-bs4
 
