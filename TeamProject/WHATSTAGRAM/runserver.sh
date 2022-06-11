@@ -9,11 +9,26 @@ pip install selenium
 #echo "$PW" | sudo -kS apt install software-properties-common
 #echo "$PW" | sudo -kS apt install python3.9
 
+<<<<<<< HEAD
+echo "$PW" | sudo -kS apt install python3-pip build-essential
+echo "$PW" | pip install requests
+=======
 #echo "$PW" | sudo -kS apt install python3-pip build-essential
+>>>>>>> bigbrother
 
 #echo "$PW" | sudo -kS apt-get update
 #echo "$PW" | sudo -kS apt-get upgrade -y
 
+<<<<<<< HEAD
+#pip install flask
+#echo "$PW" | sudo -kS apt-get install python3-bs4
+
+echo "$PW" | sudo -kS apt-get update
+
+chmod 700 runelasticsearch.sh
+chmod 700 runbrowser.sh
+
+=======
 #echo "$PW" | pip install flask
 #echo "$PW" | sudo -kS apt-get install python3-bs4
 
@@ -22,6 +37,7 @@ pip install selenium
 chmod 700 runelasticsearch.sh
 chmod 700 runbrowser.sh
 #testbigbrother
+>>>>>>> bigbrother
 #./runelasticsearch.sh
 
 gnome-terminal -e ./runelasticsearch.sh
