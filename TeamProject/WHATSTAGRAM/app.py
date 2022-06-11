@@ -5,6 +5,9 @@ from selenium.webdriver import ActionChains
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 import time
 import re
 import requests
@@ -25,6 +28,11 @@ def home():
 #     # TODO: 내용 넣기
 #     return
 
+def set_chrome_driver():
+    chrome_options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    return driver
+
 def instagram_crawling():
     # webdriver 설정하기
     app = Flask(__name__)
@@ -34,9 +42,13 @@ def instagram_crawling():
     word = str(word)
     url = 'https://www.instagram.com/' + word
 
+    #firefox
     #br = webdriver.Firefox(executable_path=r'./geckodriver')
     #br.get('https://www.instagram.com/')
-    br = webdriver.Chrome()
+
+    #chrome
+    #br = webdriver.Chrome()
+    br = set_chrome_driver()
     br.set_window_size(1500, 1000)
     br.get('https://www.instagram.com/')
     time.sleep(1.5)
@@ -106,9 +118,6 @@ def instagram_crawling():
             print(human_list)
             # 뒤로 가기
             br.back()
-
-    if __name__ == '__main__':
-        app.run()
 
 
 if __name__ == "__main__":
