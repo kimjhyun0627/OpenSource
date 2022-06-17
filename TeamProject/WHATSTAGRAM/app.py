@@ -27,7 +27,8 @@ def home():
 @app.route('/view', methods=['GET'])
 def crawl():
     instagram_crawling()
-    #return render_template('#')
+    # return render_template('#')
+
 
 # @app.route('/crawl', methods=['GET', 'POST'])
 # def dosomething():
@@ -42,6 +43,7 @@ def set_chrome_driver():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     return driver
 
+
 def create_tagfolder(directory):
     try:
         if not os.path.exists(directory):
@@ -54,15 +56,16 @@ def instagram_crawling():
     # webdriver 설정하기
     app = Flask(__name__)
 
-    create_tagfolder('static/tag_folder')
     # put application's code here
-    #word = input("아이디 입력: ")
+    # word = input("아이디 입력: ")
     word = request.args.get("ID")
+    create_tagfolder('static/tag_folder/')
+    create_tagfolder('static/tag_folder/' + word)
     word = str(word)
     url = 'https://www.picuki.com/profile/' + word
 
-    #chrome
-    #br = webdriver.Chrome()
+    # chrome
+    # br = webdriver.Chrome()
     br = set_chrome_driver()
     br.set_window_size(1500, 1000)
     br.get(url)
@@ -71,50 +74,61 @@ def instagram_crawling():
     # 해당 페이지의 div 클래스 id를 추출후 # 추가
     html = br.page_source
     soup = BeautifulSoup(html, 'lxml')
+    profile = soup.find('div', 'profile-avatar').find('img')
     post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
 
     # print(id)
     list = []
     tag_list = []
     human_list = []
+    br.close()
 
-    n=1
+    create_tagfolder(f'static/tag_folder/' + word + '/profile')
+    imgurl = profile.get("src")
+    req = Request(imgurl, headers={'User-Agent': 'Mozilla/5.0'})
+    with open(f'static/tag_folder/{word}/profile/profile.jpg', 'wb') as h:
+        img = urlopen(req).read()
+        h.write(img)
+
+    n = 1
     for i in post:
-        list = i.get("alt").split()
-        print(list)
-        for j in list:
-            if '#' in j:
-                #각 태그에 해당하는 디렉토리 생성(없을때만)
-                tag_list.append(j)
-                create_tagfolder(f'static/tag_folder/{j}')
-                imgurl = i.get("src")
-                req = Request(imgurl, headers={'User-Agent':'Mozilla/5.0'})
+        try:
+            list = i.get('alt').split()
+            print(list)
+            for j in list:
+                if '#' in j:
+                    if not os.path.exists(f'static/tag_folder/{word}/{j}'):
+                        # 각 태그에 해당하는 디렉토리 생성(없을때만)
+                        tag_list.append(j)
+                        create_tagfolder(f'static/tag_folder/' + word + '/' + j)
+                        imgurl = i.get("src")
+                        req = Request(imgurl, headers={'User-Agent': 'Mozilla/5.0'})
 
-                #각 태그에 해당하는 이미지 저장 
-                with open(f'static/tag_folder/{j}/' + str(n) + '.jpg', 'wb') as h:
-                    img = urlopen(req).read()
-                    h.write(img)
-                    n = n+1
+                        # 각 태그에 해당하는 이미지 저장
+                        with open(f'static/tag_folder/{word}/{j}/' + str(n) + '.jpg', 'wb') as h:
+                            img = urlopen(req).read()
+                            h.write(img)
+                            n = n + 1
 
-            elif '@' in j:
-                human_list.append(j)
-        print(i.get("src"))
-        print("="*20)
-        list=[]
+                elif '@' in j:
+                    human_list.append(j)
+        except:
+            continue
+        #print(i.get("src"))
+        print("=" * 20)
+        list = []
 
     print(tag_list)
     print(human_list)
 
     # 크롤링할 게시물 행 by 열 범위 지정
-    #br.execute_script("window.scrollTo(0, 500);")
+    # br.execute_script("window.scrollTo(0, 500);")
     time.sleep(5)
 
 
-    br.close()
-
-#오류1 : 글 자체가 없으면 findAll() 에러
-#오류2 : 게시물 갯수가 적으면 에러
-#오류3 : 비공계 처리 어떻게 할건지
+# 오류1 : 글 자체가 없으면 findAll() 에러
+# 오류2 : 게시물 갯수가 적으면 에러
+# 오류3 : 비공계 처리 어떻게 할건지
 
 if __name__ == "__main__":
     app.run(debug=True)
