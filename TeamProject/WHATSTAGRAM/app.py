@@ -85,7 +85,7 @@ def instagram_crawling():
 
     # 인스타 사용자의 아이디 url사이트로 넘어가기
     br.get(url)
-    time.sleep(5)
+    time.sleep(10)
 
     # 해당 페이지의 div 클래스 id를 추출후 # 추가
     html = br.page_source
@@ -101,8 +101,23 @@ def instagram_crawling():
 
     # 크롤링할 게시물 행 by 열 범위 지정
 
+    time.sleep(2)
+    try:
+        #post = br.find_element_by_css_selector(
+         #           id + f'> div > div:nth-child(1) > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div.j83agx80.cbu4d94t.d6urw2fd.dp1hu0rb.l9j0dhe7.du4w35lb > div._a3gq > section > main > div > div._aa-i > article > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > a > div._aagu > div._aagw')
+        post = br.find_element(By.CSS_SELECTOR, id + f'> div > div:nth-child(1) > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div.j83agx80.cbu4d94t.d6urw2fd.dp1hu0rb.l9j0dhe7.du4w35lb > div._a3gq > section > main > div > div._aa-i > article > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > a > div._aagu > div._aagw')
+        post.click()
+        time.sleep(5)
+        html = br.page_source
+        soup = BeautifulSoup(html, 'lxml')
+        print("success")
+    except:
+        print("fail")
+    
     for row in range(1, 4):  # 3 by
         for col in range(1, 4):  # 3
+      	   
+            print(row,col)
             try:  #게시물이 비었는지 판단하기 위한 try 문 - 오류1해결
                
                 post = br.find_element_by_css_selector(
@@ -133,6 +148,7 @@ def instagram_crawling():
                     print("글이 없으므로 다음으로 넘어갑니다")
 
                 # a 태그 속 text 추출 및 #으로 태그인지 아닌지 구분
+                
                 print(tag_list)
                 print(human_list)
                 # 뒤로 가기
@@ -140,32 +156,9 @@ def instagram_crawling():
 
             except:
                 print("게시물이 비었습니다")
-                break
+                
 
-            first = br.find_element_by_css_selector(
-                id + f'> div > div:nth-child(1) > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div.j83agx80.cbu4d94t.d6urw2fd.dp1hu0rb.l9j0dhe7.du4w35lb > div._a3gq > section > main > div > div._aa-i > article > div:nth-child(1) > div > div:nth-child({row}) > div:nth-child({col}) > a > div._aagu > div._aagw').click()
-            time.sleep(2)
-            # css_selector로 format 지정 후 클릭
-            html = br.page_source
-            soup = BeautifulSoup(html, 'lxml')
 
-            # 태그가 포함된 span 클래스로 접근
-            tags = soup.find('span', {'class', "_aacl _aaco _aacu _aacx _aad7 _aade"})
-            # print(tags)
-            tags = tags.find_all('a')
-            # a 클래스에 태그내용포함되어있음
-            # print(tags)
-            for i in tags:
-                i = i.get_text()
-                if ('#' in i):
-                    tag_list.append(i)
-                elif '@' in i:
-                    human_list.append(i)
-            # a 태그 속 text 추출 및 #으로 태그인지 아닌지 구분
-            print(tag_list)
-            print(human_list)
-            # 뒤로 가기
-            br.back()
 
 #오류1 : 글 자체가 없으면 findAll() 에러
 #오류2 : 게시물 갯수가 적으면 에러
