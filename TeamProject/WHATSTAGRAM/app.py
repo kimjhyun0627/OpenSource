@@ -3,6 +3,7 @@
 import os.path
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
+from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
@@ -77,12 +78,24 @@ def instagram_crawling():
     tag_list = []
     human_list = []
 
+    n=1
     for i in post:
         list = i.get("alt").split()
         print(list)
         for j in list:
-            if ('#' in j):
+            if '#' in j:
+                #각 태그에 해당하는 디렉토리 생성(없을때만)
                 tag_list.append(j)
+                create_tagfolder(f'static/tag_folder/{j}')
+                imgurl = i.get("src")
+                req = Request(imgurl, headers={'User-Agent':'Mozilla/5.0'})
+
+                #각 태그에 해당하는 이미지 저장 
+                with open(f'static/tag_folder/{j}/' + str(n) + '.jpg', 'wb') as h:
+                    img = urlopen(req).read()
+                    h.write(img)
+                    n = n+1
+
             elif '@' in j:
                 human_list.append(j)
         print(i.get("src"))
