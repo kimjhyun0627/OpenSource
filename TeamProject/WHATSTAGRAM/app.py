@@ -73,15 +73,24 @@ def instagram_crawling():
     post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
 
     # print(id)
-
-    for i in post:
-        print(type(i.get("alt")))
-
-        print(type(i.get("src")))
-        print("="*20)
-
+    list = []
     tag_list = []
     human_list = []
+
+    for i in post:
+        list = i.get("alt").split()
+        print(list)
+        for j in list:
+            if ('#' in j):
+                tag_list.append(j)
+            elif '@' in j:
+                human_list.append(j)
+        print(i.get("src"))
+        print("="*20)
+        list=[]
+
+    print(tag_list)
+    print(human_list)
 
     # 크롤링할 게시물 행 by 열 범위 지정
     #br.execute_script("window.scrollTo(0, 500);")
