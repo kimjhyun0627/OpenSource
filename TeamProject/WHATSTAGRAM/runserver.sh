@@ -17,12 +17,6 @@ pip install lxml
 # 크롬 버전 확인
 google-chrome --version
 
-# 크롬 파일 받기 -> 나중에 살리기
-#wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
-
-# 압축 해제 -> 나중에 살리기
-#unzip chromedriver_linux64.zip
-
 pip install webdriver-manager
 
 #echo "$PW" | sudo -kS apt install software-properties-common
