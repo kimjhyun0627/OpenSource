@@ -100,11 +100,18 @@ def instagram_crawling():
     human_list = []
 
     # 크롤링할 게시물 행 by 열 범위 지정
+
     try:
         post = br.find_element_by_css_selector(
-                    id + f'> div > div:nth-child(1) > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div.j83agx80.cbu4d94t.d6urw2fd.dp1hu0rb.l9j0dhe7.du4w35lb > div._a3gq > section > main > div > div._aa-i > article > div:nth-child(1) > div > div:nth-child({row}) > div:nth-child({col}) > a > div._aagu > div._aagw')
+                    id + f'> div > div:nth-child(1) > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div.j83agx80.cbu4d94t.d6urw2fd.dp1hu0rb.l9j0dhe7.du4w35lb > div._a3gq > section > main > div > div._aa-i > article > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > a > div._aagu > div._aagw')
+        post.click()
+        time.sleep(2)
+        html = br.page_source
+        soup = BeautifulSoup(html, 'lxml')
+        print("success")
     except:
         print("check")
+    
     for row in range(1, 4):  # 3 by
         for col in range(1, 4):  # 3
             try:  #게시물이 비었는지 판단하기 위한 try 문 - 오류1해결
@@ -137,6 +144,7 @@ def instagram_crawling():
                     print("글이 없으므로 다음으로 넘어갑니다")
 
                 # a 태그 속 text 추출 및 #으로 태그인지 아닌지 구분
+                
                 print(tag_list)
                 print(human_list)
                 # 뒤로 가기
@@ -144,7 +152,7 @@ def instagram_crawling():
 
             except:
                 print("게시물이 비었습니다")
-                break
+                return
 
 
 
