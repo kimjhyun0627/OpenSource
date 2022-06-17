@@ -103,7 +103,8 @@ def instagram_crawling():
     try:
         post = br.find_element_by_css_selector(
                     id + f'> div > div:nth-child(1) > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div.j83agx80.cbu4d94t.d6urw2fd.dp1hu0rb.l9j0dhe7.du4w35lb > div._a3gq > section > main > div > div._aa-i > article > div:nth-child(1) > div > div:nth-child({row}) > div:nth-child({col}) > a > div._aagu > div._aagw')
-
+    except:
+        print("check")
     for row in range(1, 4):  # 3 by
         for col in range(1, 4):  # 3
             try:  #게시물이 비었는지 판단하기 위한 try 문 - 오류1해결
