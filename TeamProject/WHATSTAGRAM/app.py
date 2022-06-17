@@ -100,6 +100,9 @@ def instagram_crawling():
     human_list = []
 
     # 크롤링할 게시물 행 by 열 범위 지정
+    try:
+        post = br.find_element_by_css_selector(
+                    id + f'> div > div:nth-child(1) > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div.j83agx80.cbu4d94t.d6urw2fd.dp1hu0rb.l9j0dhe7.du4w35lb > div._a3gq > section > main > div > div._aa-i > article > div:nth-child(1) > div > div:nth-child({row}) > div:nth-child({col}) > a > div._aagu > div._aagw')
 
     for row in range(1, 4):  # 3 by
         for col in range(1, 4):  # 3
