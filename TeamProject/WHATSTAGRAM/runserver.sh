@@ -6,6 +6,7 @@ echo "$PW" | sudo -kS apt-get update
 python3 --version
 echo "$PW" | sudo -kS pip install -r requirements.txt
 pip install -U selenium
+pip install lxml
 
 # 설치파일 받기 -> 나중에 살리기
 #wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
