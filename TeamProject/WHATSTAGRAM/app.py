@@ -142,30 +142,7 @@ def instagram_crawling():
                 print("게시물이 비었습니다")
                 break
 
-            first = br.find_element_by_css_selector(
-                id + f'> div > div:nth-child(1) > div > div.rq0escxv.l9j0dhe7.du4w35lb > div > div > div.j83agx80.cbu4d94t.d6urw2fd.dp1hu0rb.l9j0dhe7.du4w35lb > div._a3gq > section > main > div > div._aa-i > article > div:nth-child(1) > div > div:nth-child({row}) > div:nth-child({col}) > a > div._aagu > div._aagw').click()
-            time.sleep(2)
-            # css_selector로 format 지정 후 클릭
-            html = br.page_source
-            soup = BeautifulSoup(html, 'lxml')
 
-            # 태그가 포함된 span 클래스로 접근
-            tags = soup.find('span', {'class', "_aacl _aaco _aacu _aacx _aad7 _aade"})
-            # print(tags)
-            tags = tags.find_all('a')
-            # a 클래스에 태그내용포함되어있음
-            # print(tags)
-            for i in tags:
-                i = i.get_text()
-                if ('#' in i):
-                    tag_list.append(i)
-                elif '@' in i:
-                    human_list.append(i)
-            # a 태그 속 text 추출 및 #으로 태그인지 아닌지 구분
-            print(tag_list)
-            print(human_list)
-            # 뒤로 가기
-            br.back()
 
 #오류1 : 글 자체가 없으면 findAll() 에러
 #오류2 : 게시물 갯수가 적으면 에러
