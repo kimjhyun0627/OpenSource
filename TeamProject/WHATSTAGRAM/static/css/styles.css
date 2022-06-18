@@ -10,6 +10,15 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+::-webkit-scrollbar{
+  width:2px;
+  background-color: #e9e9e9;
+}
+::-webkit-scrollbar-thumb{
+  border-radius: 1px;
+  background-color: #393939;
+}
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;

@@ -14,20 +14,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Nanum+Brush+Script&family=Pacifico&family=Patua+One&display=swap"
           rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="css/styles.css" rel="stylesheet"/>
-    <link href="show_style.css" rel="stylesheet">
+    <link href="{{url_for('static',filename='css/styles.css')}}" rel="stylesheet"/>
+    <link href="{{url_for('static',filename='css/show_style.css')}}" rel="stylesheet">
 </head>
 
+<!--body-->
 <body class="d-flex flex-column h-100">
 <main class="flex-shrink-0">
     <!-- Navigation-->
     <div class="header_container">
         <div class="header_nav">
-            <a href="#" onclick="location.href='main.html'"><span class="title" style="font-size:3em">#</span>
+            <a href="http://localhost:5000/" onclick="location.href='main.html'"><span class="title"
+                                                                                       style="font-size:3em">#</span>
                 <span class="title" style="font-size:2em">Whatstagram</span></a>
             <div class="nav">
                 <ul>
-                    <li class="text"><a href="#" onclick="location.href='main.html'">HOME</a></li>
+                    <li class="text"><a href="http://localhost:5000/"">HOME</a></li>
                     <li class="text"><a href="#" onclick="modalBrowse()">CONTACT</a></li>
                 </ul>
             </div>
@@ -48,9 +50,11 @@
                         <div class="row gx-5 align-items-center justify-content-center">
                             <div class="col-lg-8 col-xl-7 col-xxl-6">
                                 <div class="my-5 text-center text-xl-start">
-                                    <h1 class="display-1 fw-bolder text-white mb-5">nozeworld</h1>
-                                    <p class="fs-1 lead fw-normal text-white-50 mb-4">#Dior #calvinklein <br> #노제시리얼
-                                        #Burberry</p>
+                                    <h1 class="display-1 fw-bolder text-white mb-5" {{ id }}</h1>
+                                    <p class="fs-1 lead fw-normal text-white-50 mb-4">
+                                        {{tagList[0]}}&nbsp;{{tagList[1]}}
+                                        <br>
+                                        {{tagList[2]}}&nbsp;{{tagList[3]}}</p>
                                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
                                         <!-- <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Get Started</a>
                                         <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a> -->
@@ -58,7 +62,8 @@
                                 </div>
                             </div>
                             <div class="col-xl-2 col-xxl-4 d-none d-xl-block text-center"><img
-                                    class="img-fluid rounded-3 my-5" src="img/noze.png" alt="..."/></div>
+                                    class="img-fluid rounded-3 my-5" src="{{url_for('static',filename=profile)}}"
+                                    alt="..."/></div>
                         </div>
                     </div>
                 </li>
@@ -67,8 +72,8 @@
                         <div class="row gx-5 align-items-center justify-content-center">
                             <div class="col-lg-8 col-xl-7 col-xxl-6">
                                 <div class="my-5 text-center text-xl-start">
-                                    <h1 class="display-1 fw-bolder text-white mb-5">#Dior</h1>
-                                    <h1 class="display-4 fw-bolder text-white mb-5">Frequency</h1>
+                                    <h1 class="display-1 fw-bolder text-white mb-5">{{tagList[0]}}</h1>
+                                    <h1 class="display-4 fw-bolder text-white mb-5">{{freqList[0]}}</h1>
                                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
                                         <!-- <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Get Started</a> -->
                                         <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
@@ -76,7 +81,8 @@
                                 </div>
                             </div>
                             <div class="col-xl-2 col-xxl-4 d-none d-xl-block text-center"><img
-                                    class="img-fluid rounded-3 my-5" src="img/dior.png" alt="..."/></div>
+                                    class="img-fluid rounded-3 my-5" src="{{url_for('static',filename=imgList[0])}}"
+                                    alt="..."/></div>
                         </div>
                     </div>
                 </li>
@@ -94,7 +100,8 @@
                                 </div>
                             </div>
                             <div class="col-xl-2 col-xxl-4 d-none d-xl-block text-center"><img
-                                    class="img-fluid rounded-3 my-5" src="img/noze.png" alt="..."/></div>
+                                    class="img-fluid rounded-3 my-5" src="{{url_for('static',filename='img/noze.png')}}"
+                                    alt="..."/></div>
                         </div>
                     </div>
                 </li>
@@ -112,7 +119,8 @@
                                 </div>
                             </div>
                             <div class="col-xl-2 col-xxl-4 d-none d-xl-block text-center"><img
-                                    class="img-fluid rounded-3 my-5" src="img/noze.png" alt="..."/></div>
+                                    class="img-fluid rounded-3 my-5" src="{{url_for('static',filename='img/noze.png')}}"
+                                    alt="..."/></div>
                         </div>
                     </div>
                 </li>
@@ -220,7 +228,7 @@
             <div class="row gx-5">
                 <div class="col-lg-4 mb-5">
                     <div class="card h-100 shadow border-0">
-                        <img class="card-img-top" src="img/aiki.png" alt="..."/>
+                        <img class="card-img-top" src="{{url_for('static',filename='img/aiki.png')}}" alt="..."/>
                         <div class="card-body p-4">
                             <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div>
                             <a class="text-decoration-none link-dark stretched-link" href="#!">
@@ -245,7 +253,7 @@
                 </div>
                 <div class="col-lg-4 mb-5">
                     <div class="card h-100 shadow border-0">
-                        <img src="img/leejung.png" style="" alt="..."/>
+                        <img src="{{url_for('static',filename='img/leejung.png')}}" style="bor" alt="..."/>
                         <div class="card-body p-4">
                             <div class="badge bg-primary bg-gradient rounded-pill mb-2">Media</div>
                             <a class="text-decoration-none link-dark stretched-link" href="#!">
@@ -271,7 +279,7 @@
                 </div>
                 <div class="col-lg-4 mb-5">
                     <div class="card h-100 shadow border-0">
-                        <img class="card-img-top" src="img/diorProfile.png" alt="..."/>
+                        <img class="card-img-top" src="{{url_for('static',filename='img/diorProfile.png')}}" alt="..."/>
                         <div class="card-body p-4">
                             <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div>
                             <a class="text-decoration-none link-dark stretched-link" href="#!">
@@ -378,5 +386,5 @@
         }
     });
 </script>
-</body>
+
 </html>

@@ -34,12 +34,18 @@ def home():
 @app.route('/view', methods=['GET'])
 def crawl():
     word = request.args.get("ID")
+    tags = []
+    freqs = []
     if (create_tagfolder('static/tag_folder/' + word) == 0):
-        instagram_crawling(word)
+        tags, freqs = instagram_crawling(word)
     else:
-        get_es(word)
+        tags, freqs = get_es(word)
         counter(word)
-    return render_template('show.html')
+
+    imgs = []
+    for t in tags:
+        imgs.append('tag_folder/'+word+'/'+t+'/tagIMG.jpg')
+    return render_template('show.html',id=word, tagList = tags, freqList = freqs, profile='tag_folder/'+word+'/profile/profile.jpg', imgList = imgs )
 
 
 def set_chrome_driver():
@@ -167,6 +173,8 @@ def instagram_crawling(ID):
 
     br.close()
 
+    return tag_list[0:4], tag_freq[0:4]
+
     # 크롤링할 게시물 행 by 열 범위 지정
     # br.execute_script("window.scrollTo(0, 500);")
 
@@ -187,14 +195,19 @@ def sortList(sig, freq):
 
 
 def get_es(word):
-    res = es.search(index=word, size=3)
+    res = es.search(index=word, size=4)
 
     dicList = []
+    freqList = []
     for i in res['hits']['hits']:
         i = list(i.values())
         dic = list(i[3].values())[0]
+        freq = list(i[3].values())[1]
         dicList.append(dic)
+        freqList.append(freq)
     print(dicList)
+
+    return dicList, freqList
 
 
 def getid():
