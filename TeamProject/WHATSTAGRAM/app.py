@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import json
 import os.path
+import random
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 from urllib.request import Request, urlopen
@@ -25,6 +27,7 @@ es = Elasticsearch(hosts=es_host)
 @app.route('/', methods=['GET'])
 def home():
     create_tagfolder('static/tag_folder/')
+    ids = getid()
     return render_template('main.html')
 
 
@@ -35,14 +38,9 @@ def crawl():
         instagram_crawling(word)
     else:
         get_es(word)
-    counter(word)
+        counter(word)
     return render_template('main.html')
 
-
-# @app.route('/crawl', methods=['GET', 'POST'])
-# def dosomething():
-#     # TODO: 내용 넣기
-#     return
 
 def set_chrome_driver():
     chrome_options = webdriver.ChromeOptions()
@@ -82,21 +80,26 @@ def instagram_crawling(ID):
     br = set_chrome_driver()
     br.set_window_size(1500, 1000)
     # br.implicitly_wait(20)
-    br.get(url)
-    time.sleep(3)
+    time.sleep(random.randrange(0, 3))
 
-    doc = {"name": word, "freq": 1}
-    print(doc)
-    es.index(index="id", document=doc)
-
-    # 해당 페이지의 div 클래스 id를 추출후 # 추가
-    wait = WebDriverWait(br, 10)
-    html = br.page_source
-    print(html)
-    soup = BeautifulSoup(html, 'lxml')
-    profile = soup.find('div', 'profile-avatar').find('img')
-    post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
-    print(post)
+    suc = False
+    while suc != True:
+        time.sleep(2)
+        try:
+            br.get(url)
+            doc = {"name": word, "freq": 1}
+            es.index(index="id", document=doc)
+            # 해당 페이지의 div 클래스 id를 추출후 # 추가
+            wait = WebDriverWait(br, 10)
+            html = br.page_source
+            print(html)
+            soup = BeautifulSoup(html, 'lxml')
+            profile = soup.find('div', 'profile-avatar').find('img')
+            post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
+            print(post)
+            suc = True
+        except:
+            continue
 
     # print(id)
     tag_list = []
@@ -151,16 +154,10 @@ def instagram_crawling(ID):
     print(tag_list)
     print(tag_freq)
 
-    for i in range(0, len(tag_list) - 1):
-        min_idx = i
-        for j in range(i + 1, len(tag_list)):
-            if tag_freq[j] > tag_freq[min_idx]:
-                min_idx = j
-            tag_list[i], tag_list[min_idx] = tag_list[min_idx], tag_list[i]
-            tag_freq[i], tag_freq[min_idx] = tag_freq[min_idx], tag_freq[i]
+    tag_list, tag_freq = sortList(tag_list, tag_freq)
 
-    for k in tag_list:
-        body = {"tag": k, "freq": tag_freq[tag_list.index(k)]}
+    for i in range(0, len(tag_list)):
+        body = {"tag": tag_list[i], "freq": tag_freq[i]}
         print(body)
         es.index(index=word, document=body)
 
@@ -174,6 +171,21 @@ def instagram_crawling(ID):
     # br.execute_script("window.scrollTo(0, 500);")
 
 
+def sortList(sig, freq):
+    for i in range(0, len(sig) - 1):
+        idx = i
+        for j in range(i + 1, len(sig)):
+            if freq[j] > freq[idx]:
+                idx = j
+                print(sig[idx])
+                print(sig[i])
+        sig[i], sig[idx] = sig[idx], sig[i]
+        freq[i], freq[idx] = freq[idx], freq[i]
+    print(sig)
+    print(freq)
+    return sig, freq
+
+
 def get_es(word):
     res = es.search(index=word, size=3)
 
@@ -185,10 +197,36 @@ def get_es(word):
     print(dicList)
 
 
+def getid():
+    res = es.search(index="id", size=10000)
+    idList = []
+    freqList = []
+    for i in res['hits']['hits']:
+        i = list(i.values())
+        id = list(i[3].values())[0]
+        freq = list(i[3].values())[1]
+        idList.append(id)
+        freqList.append(freq)
+    print(idList)
+    print(freqList)
+
+    idList, freqList = sortList(idList, freqList)
+
+    print(idList)
+    print(freqList)
+
+
 def counter(word):
-    doc = {"size": 1, 'query': {'match': {"name": word}}}
-    res = es.search(index="id", body=doc)
-    print(res['hits']['hits'])
+    res = es.search(index="id", body={"size": 1, 'query': {'match': {"name": word}}})
+    res = list(res['hits']['hits'][0].values())
+    print(res)
+    ID = res[1]
+    name = list(res[3].values())[0]
+    freq = list(res[3].values())[1]
+    print(ID)
+    print(name)
+    print(freq)
+    es.update(index="id", id=ID, doc={"name": name, "freq": freq + 1})
 
 
 # 오류1 : 글 자체가 없으면 findAll() 에러
