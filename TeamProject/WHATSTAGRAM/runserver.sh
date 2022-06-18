@@ -8,6 +8,12 @@ echo "$PW" | sudo -kS pip install -r requirements.txt
 pip install -U selenium
 pip install lxml
 
+chmod 700 runelasticsearch.sh
+chmod 700 runbrowser.sh
+
+#./runelasticsearch.sh
+gnome-terminal -e ./runelasticsearch.sh
+
 # 설치파일 받기 -> 나중에 살리기
 #wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
@@ -33,20 +39,13 @@ echo "$PW" | pip install requests
 
 echo "$PW" | sudo -kS apt-get update
 
-chmod 700 runelasticsearch.sh
-chmod 700 runbrowser.sh
-
 #echo "$PW" | pip install flask
 #echo "$PW" | sudo -kS apt-get install python3-bs4
 
 #echo "$PW" | sudo -kS apt-get update
 
-chmod 700 runelasticsearch.sh
-chmod 700 runbrowser.sh
 #testbigbrother
-#./runelasticsearch.sh
 
-gnome-terminal -e ./runelasticsearch.sh
 gnome-terminal -e ./runbrowser.sh
 
 python3 app.py
