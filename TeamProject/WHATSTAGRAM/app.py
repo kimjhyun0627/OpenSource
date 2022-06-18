@@ -1,13 +1,22 @@
 #!usr/bin/python3
 # -*- coding: utf-8 -*-
+<<<<<<< Updated upstream
 import json
+=======
+>>>>>>> Stashed changes
 import os.path
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 from selenium import webdriver
+<<<<<<< Updated upstream
 from elasticsearch import Elasticsearch
+=======
+import urllib.request
+from urllib.request import urlopen
+import os, sys
+>>>>>>> Stashed changes
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
@@ -30,6 +39,7 @@ def home():
 
 @app.route('/view', methods=['GET'])
 def crawl():
+<<<<<<< Updated upstream
     word = request.args.get("ID")
     if (create_tagfolder('static/tag_folder/' + word) == 0):
         instagram_crawling(word)
@@ -37,6 +47,10 @@ def crawl():
         get_es(word)
     counter(word)
     return render_template('main.html')
+=======
+    images = instagram_crawling()
+    return render_template('main1.html', imgList = images)
+>>>>>>> Stashed changes
 
 
 # @app.route('/crawl', methods=['GET', 'POST'])
@@ -57,6 +71,7 @@ def create_tagfolder(directory):
     try:
         if not os.path.exists(directory):
             os.makedirs(directory)
+<<<<<<< Updated upstream
             return 0
     except:
         return -1
@@ -77,10 +92,25 @@ def instagram_crawling(ID):
     # word = str(word)
     url = 'https://www.picuki.com/profile/' + word
 
+=======
+    except:
+        return
+
+
+def instagram_crawling():
+    create_tagfolder('static/tag_folder')
+    # put application's code here
+    # word = input("아이디 입력: ")
+    word = request.args.get("ID")
+    word = str(word)
+    url = 'https://www.picuki.com/profile/' + word
+
+>>>>>>> Stashed changes
     # chrome
     # br = webdriver.Chrome()
     br = set_chrome_driver()
     br.set_window_size(1500, 1000)
+<<<<<<< Updated upstream
     #br.implicitly_wait(20)
     br.get(url)
     time.sleep(3)
@@ -88,16 +118,34 @@ def instagram_crawling(ID):
     doc = {"name": word, "freq": 1}
     print(doc)
     es.index(index="id", document=doc)
+=======
+    br.get(url)
+    time.sleep(4)
+>>>>>>> Stashed changes
 
     # 해당 페이지의 div 클래스 id를 추출후 # 추가
     wait = WebDriverWait(br, 10)
     html = br.page_source
     print(html)
     soup = BeautifulSoup(html, 'lxml')
+<<<<<<< Updated upstream
     profile = soup.find('div', 'profile-avatar').find('img')
     post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
     print(post)
 
+=======
+    post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
+    br.close()
+    imgList = []
+    # print(id)
+    success = 0
+    for i in post:
+        print(i.get("alt"))
+        u = i.get("src")
+        u = "http" + u[5:]
+        print(u)
+        imgList.append(u)
+>>>>>>> Stashed changes
 
     # print(id)
     tag_list = []
@@ -168,6 +216,7 @@ def instagram_crawling(ID):
 
     # 크롤링할 게시물 행 by 열 범위 지정
     # br.execute_script("window.scrollTo(0, 500);")
+<<<<<<< Updated upstream
 
 
 def get_es(word):
@@ -185,6 +234,12 @@ def counter(word):
     res = es.search(index="id", body=doc)
     print(res['hits']['hits'])
 
+=======
+    time.sleep(5)
+    return imgList
+
+
+>>>>>>> Stashed changes
 # 오류1 : 글 자체가 없으면 findAll() 에러
 # 오류2 : 게시물 갯수가 적으면 에러
 # 오류3 : 비공계 처리 어떻게 할건지
