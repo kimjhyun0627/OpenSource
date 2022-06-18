@@ -81,7 +81,7 @@ def instagram_crawling(ID):
     # br = webdriver.Chrome()
     br = set_chrome_driver()
     br.set_window_size(1500, 1000)
-    #br.implicitly_wait(20)
+    # br.implicitly_wait(20)
     br.get(url)
     time.sleep(3)
 
@@ -98,7 +98,6 @@ def instagram_crawling(ID):
     post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
     print(post)
 
-
     # print(id)
     tag_list = []
     human_list = []
@@ -112,12 +111,12 @@ def instagram_crawling(ID):
         img = urlopen(req).read()
         h.write(img)
 
-    br.close()
-
     n = 1
     create_index(word)
     for i in post:
         # time.sleep(2)
+        # br.execute_script("window.scrollTo(0, 500);")
+
         try:
             list = i.get('alt').split()
             print(list)
@@ -149,13 +148,16 @@ def instagram_crawling(ID):
         # print(i.get("src"))
         print("=" * 50)
 
-    for i in tag_list:
-        for j in tag_list:
-            if tag_list.index(i) < tag_list.index(j) and tag_freq[tag_list.index(i)] < tag_freq[tag_list.index(j)]:
-                i, j = j, i
-                tag_freq[tag_list.index(i)], tag_freq[tag_list.index(j)] = tag_freq[tag_list.index(j)], tag_freq[
-                    tag_list.index(i)]
-        # tags.append({"tag": i, "freq": tag_freq.index(i)})
+    print(tag_list)
+    print(tag_freq)
+
+    for i in range(0, len(tag_list) - 1):
+        min_idx = i
+        for j in range(i + 1, len(tag_list)):
+            if tag_freq[j] > tag_freq[min_idx]:
+                min_idx = j
+            tag_list[i], tag_list[min_idx] = tag_list[min_idx], tag_list[i]
+            tag_freq[i], tag_freq[min_idx] = tag_freq[min_idx], tag_freq[i]
 
     for k in tag_list:
         body = {"tag": k, "freq": tag_freq[tag_list.index(k)]}
@@ -165,6 +167,8 @@ def instagram_crawling(ID):
     print(tag_list)
     print(tag_freq)
     print(human_list)
+
+    br.close()
 
     # 크롤링할 게시물 행 by 열 범위 지정
     # br.execute_script("window.scrollTo(0, 500);")
@@ -180,10 +184,12 @@ def get_es(word):
         dicList.append(dic)
     print(dicList)
 
+
 def counter(word):
-    doc = {"size":1, 'query':{'match':{"name":word}}}
+    doc = {"size": 1, 'query': {'match': {"name": word}}}
     res = es.search(index="id", body=doc)
     print(res['hits']['hits'])
+
 
 # 오류1 : 글 자체가 없으면 findAll() 에러
 # 오류2 : 게시물 갯수가 적으면 에러
