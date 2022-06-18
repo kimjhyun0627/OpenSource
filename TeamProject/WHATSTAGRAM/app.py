@@ -39,7 +39,7 @@ def crawl():
     else:
         get_es(word)
         counter(word)
-    return render_template('main.html')
+    return render_template('show.html')
 
 
 def set_chrome_driver():
