@@ -54,6 +54,7 @@ def crawl():
     for i in ids:
         if i != "":
             imgs.append('tag_folder/' + word + '/ids/' + i + '/profile.jpg')
+
     print("IMGS:")
     print(imgs)
 
@@ -341,6 +342,14 @@ def getid():
         freqList.append(freq)
     print(idList)
     print(freqList)
+
+    if len(freqList) < 3:
+        for i in range(0, 3):
+            freqList.append(0)
+
+    if len(idList) < 3:
+        for i in range(0, 3):
+            idList.append("")
 
     idList, freqList = sortList(idList, freqList)
     idList, freqList = randList(idList, freqList)
