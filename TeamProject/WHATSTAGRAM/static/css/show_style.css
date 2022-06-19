@@ -119,12 +119,12 @@ header.sticky {
 }
 
 .section_slide .slidelist .left {
-  background: url('img/left.png') center center / 100% no-repeat;
+  background: url("../img/left.png") center center / 100% no-repeat;
 }
 
 /* LEFT -300px로 화살표가 안보이게 되어있도록 준 스타일 */
 .section_slide .slidelist .right {
-  background: url('img/right.png') center center / 100% no-repeat;
+  background: url('../img/right.png') center center / 100% no-repeat;
 }
 
 /* RIGHT -300px로 화살표가 안보이게 되어있도록 준 스타일 */

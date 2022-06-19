@@ -21,14 +21,18 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 es_host = "http://localhost:9200"
-es = Elasticsearch(hosts=es_host)
+es = Elasticsearch(hosts=es_host, timeout=30, max_retries=3, retry_on_timeout=True)
 
 
 @app.route('/', methods=['GET'])
 def home():
     create_tagfolder('static/tag_folder/')
     ids = getid()
-    return render_template('main.html')
+    imgs = []
+    for i in ids:
+        imgs.append('tag_folder/' + i + '/profile/profile.jpg')
+
+    return render_template('main_semi.html', idList = ids, imgList = imgs)
 
 
 @app.route('/view', methods=['GET'])
@@ -36,17 +40,24 @@ def crawl():
     word = request.args.get("ID")
     tags = []
     freqs = []
+    ids = []
     if (create_tagfolder('static/tag_folder/' + word) == 0):
-        tags, freqs = instagram_crawling(word)
+        tags, freqs, ids = instagram_crawling(word)
     else:
-        tags, freqs = get_es(word)
+        tags, freqs, ids = get_es(word)
+        print(ids)
         counter(word)
 
     imgs = []
     for t in tags:
         imgs.append('tag_folder/' + word + '/' + t + '/tagIMG.jpg')
+    for i in ids:
+        if i != "":
+            imgs.append('tag_folder/' + word + '/ids/' + i + '/profile.jpg')
+    print("IMGS:")
+    print(imgs)
 
-    return render_template('show.html', id=word, tagList=tags, freqList=freqs,
+    return render_template('show_semi.html', id=word, tagList=tags, freqList=freqs, idList=ids,
                            profile='tag_folder/' + word + '/profile/profile.jpg', imgList=imgs)
 
 
@@ -81,17 +92,13 @@ def create_index(word):
 
 
 def instagram_crawling(ID):
-    # webdriver 설정하기
-
-    # put application's code here
-    # word = input("아이디 입력: ")
     word = str(ID)
     url = 'https://www.picuki.com/profile/' + word
 
     # chrome
     # br = webdriver.Chrome()
     br = set_chrome_driver()
-    br.set_window_size(1500, 1000)
+    # br.set_window_size(1500, 1000)
 
     # br.implicitly_wait(20)
     time.sleep(random.randrange(0, 3))
@@ -105,21 +112,18 @@ def instagram_crawling(ID):
             br.get(url)
             doc = {"name": word, "freq": 1}
             es.index(index="id", document=doc)
-            # 해당 페이지의 div 클래스 id를 추출후 # 추가
             wait = WebDriverWait(br, 10)
             html = br.page_source
-            # print(html)
             soup = BeautifulSoup(html, 'lxml')
             profile = soup.find('div', 'profile-avatar').find('img')
             post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
-            # print(post)
             suc = True
         except:
             suc = False
             continue
 
     if suc == False:
-        return 0
+        return -1
 
     # print(id)
     tag_list = []
@@ -142,10 +146,9 @@ def instagram_crawling(ID):
 
         try:
             list = i.get('alt').split()
-            print(list)
             for j in list:
                 if '#' in j:
-                    print("j: " + j)
+                    print("#: " + j)
                     if not os.path.exists(f'static/tag_folder/{word}/{j}'):
                         # 각 태그에 해당하는 디렉토리 생성(없을때만)
                         tag_list.append(j)
@@ -164,8 +167,12 @@ def instagram_crawling(ID):
                         tag_freq[tag_list.index(j)] = tag_freq[tag_list.index(j)] + 1
 
                 elif '@' in j:
-                    human_list.append(j)
-                    human_freq.append(1)
+                    print("@: " + j)
+                    if j in human_list:
+                        human_freq[human_list.index(j)] += 1
+                    else:
+                        human_list.append(j)
+                        human_freq.append(1)
         except:
             continue
 
@@ -175,16 +182,31 @@ def instagram_crawling(ID):
     print(tag_list)
     print(tag_freq)
 
+    if len(tag_list) < 3:
+        for i in range(0, 3):
+            tag_list.append("")
+            tag_freq.append(0)
+
+    if len(human_list) < 3:
+        for i in range(0, 3):
+            human_list.append("")
+            human_freq.append(0)
+
     tag_list, tag_freq = sortList(tag_list, tag_freq)
-    # human_list, human_freq = sortList(human_list, human_freq)
+    human_list, human_freq = sortList(human_list, human_freq)
 
     tag_list, tag_freq = randList(tag_list, tag_freq)
-    # human_list, human_freq = randList(human_list, human_freq)
+    human_list, human_freq = randList(human_list, human_freq)
 
     for i in range(0, len(tag_list)):
         body = {"tag": tag_list[i], "freq": tag_freq[i]}
         print(body)
         es.index(index=word, document=body)
+
+    for i in range(0, len(human_list)):
+        body = {"tag": human_list[i], "freq": human_freq[i]}
+        print(body)
+        es.index(index=f'{word}_ids', document=body)
 
     print(tag_list)
     print(tag_freq)
@@ -192,13 +214,43 @@ def instagram_crawling(ID):
     print(human_list)
     print(human_freq)
 
+    id_crawler(br, word, human_list[0:3])
+
     # br.close()
     br.quit()
 
-    return tag_list[0:4], tag_freq[0:4]
+    return tag_list[0:4], tag_freq[0:4], human_list[0:3]
 
     # 크롤링할 게시물 행 by 열 범위 지정
     # br.execute_script("window.scrollTo(0, 500);")
+
+
+def id_crawler(br, word, ids):
+    suc = False
+    count = 3
+    for id in ids:
+        while suc != True and count >= 0:
+            time.sleep(random.randrange(2, 4))
+            count -= 1
+            try:
+                br.get('https://www.picuki.com/profile/' + id[1:])
+                wait = WebDriverWait(br, 10)
+                html = br.page_source
+                soup = BeautifulSoup(html, 'lxml')
+                profile = soup.find('div', 'profile-avatar').find('img')
+
+                create_tagfolder(f'static/tag_folder/' + word + '/ids/' + id)
+                imgurl = profile.get("src")
+                req = Request(imgurl, headers={'User-Agent': 'Mozilla/5.0'})
+                with open(f'static/tag_folder/{word}/ids/{id}/profile.jpg', 'wb') as h:
+                    img = urlopen(req).read()
+                    h.write(img)
+                suc = True
+            except:
+                suc = False
+                continue
+        if suc == False:
+            return -1
 
 
 def sortList(sig, freq):
@@ -258,15 +310,23 @@ def get_es(word):
 
     dicList = []
     freqList = []
+    idList = []
     for i in res['hits']['hits']:
         i = list(i.values())
         dic = list(i[3].values())[0]
         freq = list(i[3].values())[1]
         dicList.append(dic)
         freqList.append(freq)
-    print(dicList)
 
-    return dicList, freqList
+    res_id = es.search(index= f'{word}_ids', size=3)
+    for i in res_id['hits']['hits']:
+        i = list(i.values())
+        dic = list(i[3].values())[0]
+        # freq = list(i[3].values())[1]
+        idList.append(dic)
+    print(idList)
+
+    return dicList, freqList, idList[0:3]
 
 
 def getid():
@@ -287,6 +347,7 @@ def getid():
 
     print(idList)
     print(freqList)
+    return idList[0:4]
 
 
 def counter(word):
