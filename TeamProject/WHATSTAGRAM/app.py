@@ -30,9 +30,10 @@ def home():
     ids = getid()
     imgs = []
     for i in ids:
-        imgs.append('tag_folder/' + i + '/profile/profile.jpg')
+        if i != "-":
+            imgs.append('tag_folder/' + i + '/profile/profile.jpg')
 
-    return render_template('main_semi.html', idList = ids, imgList = imgs)
+    return render_template('main_semi.html', idList=ids, imgList=imgs)
 
 
 @app.route('/view', methods=['GET'])
@@ -227,11 +228,14 @@ def instagram_crawling(ID):
 
 
 def id_crawler(br, word, ids):
+    print("=" * 50 + "idcrawler" + "=" * 50)
     suc = False
     count = 3
     for id in ids:
+        suc = False
         while suc != True and count >= 0:
-            time.sleep(random.randrange(2, 4))
+            print(id)
+            time.sleep(random.randrange(0, 2))
             count -= 1
             try:
                 br.get('https://www.picuki.com/profile/' + id[1:])
@@ -319,7 +323,7 @@ def get_es(word):
         dicList.append(dic)
         freqList.append(freq)
 
-    res_id = es.search(index= f'{word}_ids', size=3)
+    res_id = es.search(index=f'{word}_ids', size=3)
     for i in res_id['hits']['hits']:
         i = list(i.values())
         dic = list(i[3].values())[0]
@@ -331,25 +335,28 @@ def get_es(word):
 
 
 def getid():
-    res = es.search(index="id", size=10000)
     idList = []
     freqList = []
-    for i in res['hits']['hits']:
-        i = list(i.values())
-        id = list(i[3].values())[0]
-        freq = list(i[3].values())[1]
-        idList.append(id)
-        freqList.append(freq)
-    print(idList)
-    print(freqList)
 
-    if len(freqList) < 3:
-        for i in range(0, 3):
+    try:
+        res = es.search(index="id", size=10000)
+        for i in res['hits']['hits']:
+            i = list(i.values())
+            id = list(i[3].values())[0]
+            freq = list(i[3].values())[1]
+            idList.append(id)
+            freqList.append(freq)
+    except:
+        freqList = [0, 0, 0, 0]
+        idList = ["-", "-", "-", "-"]
+
+    if len(freqList) < 4:
+        for i in range(0, 4):
             freqList.append(0)
 
-    if len(idList) < 3:
-        for i in range(0, 3):
-            idList.append("")
+    if len(idList) < 4:
+        for i in range(0, 4):
+            idList.append("-")
 
     idList, freqList = sortList(idList, freqList)
     idList, freqList = randList(idList, freqList)
