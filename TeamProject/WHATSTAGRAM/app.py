@@ -40,12 +40,13 @@ def main_page():
 @app.route('/view', methods=['GET'])
 def info_page():
     word = request.args.get("ID")
+    word = word.lower()
     if (tag_folder_creater('static/tag_folder/' + word) == 0):
         tags, freqs, ids = instagram_crawler(word)
     else:
         tags, freqs, ids = es_data_getter(word)
         print(ids)
-        if(tags!=-1):
+        if (tags != -1):
             es_freq_counter(word)
 
     # if tags==0 and freqs == 0 and ids == 0:
@@ -112,11 +113,12 @@ def instagram_crawler(ID):
     # br.set_window_size(1500, 1000)
 
     # br.implicitly_wait(20)
-    time.sleep(random.randrange(0, 3))
+    time.sleep(random.randrange(1, 3))
 
     suc = False
     count = 3
     while suc != True and count >= 0:
+        print(count)
         time.sleep(2)
         count -= 1
         try:
@@ -132,6 +134,7 @@ def instagram_crawler(ID):
             continue
 
     if suc == False:
+        print("failed"*20)
         body = {"tag": "", "freq": -1}
         es.index(index=word, document=body)
         return -1, -1, -1
@@ -151,12 +154,12 @@ def instagram_crawler(ID):
         img = urlopen(req).read()
         h.write(img)
 
-    n = 1
     es_index_creater(word)
     for i in post:
         try:
             list = i.get('alt').split()
             for j in list:
+                j = j.replace(',', '')
                 if '#' in j:
                     print("#: " + j)
                     if not os.path.exists(f'static/tag_folder/{word}/{j}'):
@@ -171,20 +174,27 @@ def instagram_crawler(ID):
                         with open(f'static/tag_folder/{word}/{j}/' + 'tagIMG.jpg', 'wb') as h:
                             img = urlopen(req).read()
                             h.write(img)
-                            n = n + 1
                             # time.sleep(2)
                     else:
                         tag_freq[tag_list.index(j)] = tag_freq[tag_list.index(j)] + 1
 
                 elif '@' in j:
-                    print("@: " + j)
-                    if j in human_list:
-                        human_freq[human_list.index(j)] += 1
-                    else:
-                        human_list.append(j)
+                    j = j.lower()
+                    if j[len(j)-1] == '.':
+                        j = j[:len(j)-1]
+                    flag = False
+                    print("j: "+j)
+                    print(human_list)
+                    for human in human_list:
+                        if j.lower() == human:
+                            human_freq[human_list.index(j)] = human_freq[human_list.index(j)] + 1
+                            flag = True
+                    if not flag:
+                        print("@: " + j)
+                        human_list.append(j.lower())
                         human_freq.append(1)
-                print("=" * 80)
         except:
+            print("EXCEPT"*20)
             continue
 
     print(tag_list)
@@ -234,8 +244,7 @@ def instagram_crawler(ID):
 
 
 def es_id_crawler(br, word, ids):
-    print("=" * 50 + "idcrawler" + "=" * 50)
-    suc = False
+    print("=" * 30 + "idcrawler" + "=" * 30)
     count = 3
     for id in ids:
         suc = False
@@ -274,7 +283,6 @@ def list_alligner(sig, freq):
                 print(sig[i])
         sig[i], sig[idx] = sig[idx], sig[i]
         freq[i], freq[idx] = freq[idx], freq[i]
-    print("-" * 90)
     print(sig)
     print(freq)
     return sig, freq
@@ -313,7 +321,6 @@ def list_random_alligner(sig, freq):
             randList.append(ran_num)
             print(ran_num)
             sig[k] = tmpList[0][ran_num]
-    print('+' * 90)
     print(sig)
     print(freq)
 
@@ -338,7 +345,6 @@ def es_data_getter(word):
 
     if dicList[0] == "" and freqList[0] == -1:
         if len(dicList) == 1:
-            print("!!!!!")
             return -1, -1, -1
 
     res_id = es.search(index=f'{word}_ids', size=3)
