@@ -44,16 +44,24 @@ def crawl():
 
     imgs = []
     for t in tags:
-        imgs.append('tag_folder/'+word+'/'+t+'/tagIMG.jpg')
-    return render_template('show.html',id=word, tagList = tags, freqList = freqs, profile='tag_folder/'+word+'/profile/profile.jpg', imgList = imgs )
+        imgs.append('tag_folder/' + word + '/' + t + '/tagIMG.jpg')
+
+    return render_template('show.html', id=word, tagList=tags, freqList=freqs,
+                           profile='tag_folder/' + word + '/profile/profile.jpg', imgList=imgs)
 
 
 def set_chrome_driver():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument("headless")
+    chrome_options.add_argument('disable-gpu')
+    chrome_options.add_argument("headless")  # 백그라운드작업
+    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+    chrome_options.add_experimental_option('useAutomationExtension', False)
     chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument(
+        'user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36')
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     return driver
 
@@ -78,20 +86,21 @@ def instagram_crawling(ID):
     # put application's code here
     # word = input("아이디 입력: ")
     word = str(ID)
-    # create_tagfolder('static/tag_folder/' + word)
-    # word = str(word)
     url = 'https://www.picuki.com/profile/' + word
 
     # chrome
     # br = webdriver.Chrome()
     br = set_chrome_driver()
     br.set_window_size(1500, 1000)
+
     # br.implicitly_wait(20)
     time.sleep(random.randrange(0, 3))
 
     suc = False
-    while suc != True:
+    count = 3
+    while suc != True and count >= 0:
         time.sleep(2)
+        count -= 1
         try:
             br.get(url)
             doc = {"name": word, "freq": 1}
@@ -99,20 +108,24 @@ def instagram_crawling(ID):
             # 해당 페이지의 div 클래스 id를 추출후 # 추가
             wait = WebDriverWait(br, 10)
             html = br.page_source
-            print(html)
+            # print(html)
             soup = BeautifulSoup(html, 'lxml')
             profile = soup.find('div', 'profile-avatar').find('img')
             post = soup.find('ul', 'box-photos profile-box-photos clearfix').find_all('img')
-            print(post)
+            # print(post)
             suc = True
         except:
+            suc = False
             continue
+
+    if suc == False:
+        return 0
 
     # print(id)
     tag_list = []
     human_list = []
     tag_freq = []
-    # human_freq=[]
+    human_freq = []
 
     create_tagfolder(f'static/tag_folder/' + word + '/profile')
     imgurl = profile.get("src")
@@ -152,16 +165,21 @@ def instagram_crawling(ID):
 
                 elif '@' in j:
                     human_list.append(j)
+                    human_freq.append(1)
         except:
             continue
 
         # print(i.get("src"))
-        print("=" * 50)
+        print("=" * 80)
 
     print(tag_list)
     print(tag_freq)
 
     tag_list, tag_freq = sortList(tag_list, tag_freq)
+    # human_list, human_freq = sortList(human_list, human_freq)
+
+    tag_list, tag_freq = randList(tag_list, tag_freq)
+    # human_list, human_freq = randList(human_list, human_freq)
 
     for i in range(0, len(tag_list)):
         body = {"tag": tag_list[i], "freq": tag_freq[i]}
@@ -170,9 +188,11 @@ def instagram_crawling(ID):
 
     print(tag_list)
     print(tag_freq)
-    print(human_list)
 
-    #br.close()
+    print(human_list)
+    print(human_freq)
+
+    # br.close()
     br.quit()
 
     return tag_list[0:4], tag_freq[0:4]
@@ -191,8 +211,45 @@ def sortList(sig, freq):
                 print(sig[i])
         sig[i], sig[idx] = sig[idx], sig[i]
         freq[i], freq[idx] = freq[idx], freq[i]
+    print("-" * 90)
     print(sig)
     print(freq)
+    return sig, freq
+
+
+def randList(sig, freq):
+    i = 0
+    while i < len(sig):
+        top = i
+        bottom = i
+        check = False
+        randList = []
+        tmpList = []
+        for j in range(top + 1, len(sig)):
+            if freq[i] == freq[j]:
+                bottom = j
+                check = True
+        if check == False:
+            if freq[top] != freq[top + 1]:
+                i += 1
+                continue
+            else:
+                bottom = len(sig) - 1
+        tmpList.append(sig[top:bottom + 1])
+        print(tmpList)
+        i = bottom + 1
+
+        for k in range(top, bottom + 1):
+            ran_num = random.randint(0, bottom - top)
+            while ran_num in randList:
+                ran_num = random.randint(0, bottom - top)
+            randList.append(ran_num)
+            print(ran_num)
+            sig[k] = tmpList[0][ran_num]
+    print('+' * 90)
+    print(sig)
+    print(freq)
+
     return sig, freq
 
 
@@ -226,6 +283,7 @@ def getid():
     print(freqList)
 
     idList, freqList = sortList(idList, freqList)
+    idList, freqList = randList(idList, freqList)
 
     print(idList)
     print(freqList)
