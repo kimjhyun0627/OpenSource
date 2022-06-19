@@ -1,0 +1,305 @@
+ol, ul{
+  margin:0;
+  padding:0;
+}
+
+/* body{
+  display: flex;
+  z-index: 1;
+} */
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.6s;
+  padding: 0px 250px;
+}
+
+main .header {
+  width: 100%;
+  height: 80px;
+  /* padding: 10px; */
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header a {
+  text-decoration: none;
+}
+
+.title {
+  text-transform: capitalize;
+  text-decoration: none;
+  color: white;
+  font-size: 25px;
+  font-family: 'Pacifico', cursive;
+}
+
+main .nav ul li {
+  padding-top: 25px;
+  display: inline-block;
+  margin: 0 10px;
+  font-size: 20px;
+}
+
+main .nav ul li a {
+  text-decoration: none;
+  color: white;
+}
+
+.text {
+  padding: 10px;
+  text-transform: capitalize;
+  font-size: 25px;
+  font-family: 'Patua One', cursive;
+}
+
+header.sticky {
+  z-index: 10;
+  padding: 10px 170px;
+  /* background:#1B0A2A; */
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.section_slide .bg-dark {
+  padding-top: 150px;
+  padding-bottom: 20px;
+}
+
+/* INPUT 가리기 */
+.section_slide input[id*="slide"] {
+  display: none;
+}
+
+/* 슬라이드 영역 - max-width 크기를 조절해주면 됩니다*/
+.section_slide .slidewrap {
+  max-width:auto;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.section_slide .slidelist {
+  overflow:hidden;
+  white-space: nowrap;
+  font-size: 0;
+}
+
+.section_slide .slidelist>li {
+  display: inline-block;
+  vertical-align: middle;
+  width: 100%;
+  transition: all .5s;
+}
+
+/* 화살표 화면 밖으로 나가면 안보이도록 OVERFLOW로 가림처리 */
+.section_slide .slidelist>li>a img {
+  width: 100%;
+}
+
+/* 좌우로 넘기는 LABEL버튼에 대한 스타일 */
+.section_slide .slidelist .left,.right{
+  z-index: 1;
+  top: 50%;
+  padding: 50px;
+  cursor: pointer;
+}
+
+.left_button{
+  position: absolute;left: 0px;top: 50%;transform: translateY(-110%);
+}
+
+.right_button{
+  position: absolute;right: 0px;top: 50%;transform: translateY(-110%);
+}
+
+.section_slide .slidelist .left {
+  background: url("../img/left.png") center center / 100% no-repeat;
+}
+
+/* LEFT -300px로 화살표가 안보이게 되어있도록 준 스타일 */
+.section_slide .slidelist .right {
+  background: url('../img/right.png') center center / 100% no-repeat;
+}
+
+/* RIGHT -300px로 화살표가 안보이게 되어있도록 준 스타일 */
+/* INPUT이 체크되면 변화값이 li까지 전달되는 스타일 */
+.section_slide input[id="slide01"]:checked~.slidewrap .slidelist>li {
+  transform: translateX(0%);
+}
+
+.section_slide input[id="slide02"]:checked~.slidewrap .slidelist>li {
+  transform: translateX(-100%);
+}
+
+.section_slide input[id="slide03"]:checked~.slidewrap .slidelist>li {
+  transform: translateX(-200%);
+}
+
+.section_slide input[id="slide04"]:checked~.slidewrap .slidelist>li {
+  transform: translateX(-300%);
+}
+
+/* INPUT이 체크되면 변화값이 LEFT,RIGHT에 전달되는 스타일 */
+.section_slide input[id="slide01"]:checked~.slidewrap li:nth-child(1) .left {
+  left: 30px;
+  transition: all .35s ease .5s;
+}
+
+/* 1번 INPUT이 체크되면 1번 슬라이드의 왼쪽 화살표의 LEFT값이 변하면서 나타나도록 준 스타일 */
+.section_slide input[id="slide01"]:checked~.slidewrap li:nth-child(1) .right {
+  right: 30px;
+  transition: all .35s ease .5s;
+}
+
+/* 1번 INPUT이 체크되면 1번 슬라이드의 오른쪽 화살표의 LEFT값이 변하면서 나타나도록 준 스타일 */
+.section_slide input[id="slide02"]:checked~.slidewrap li:nth-child(2) .left {
+  left: 30px;
+  transition: all .35s ease .5s;
+}
+
+/* 2번 INPUT이 체크되면 1번 슬라이드의 왼쪽 화살표의 LEFT값이 변하면서 나타나도록 준 스타일 */
+.section_slide input[id="slide02"]:checked~.slidewrap li:nth-child(2) .right {
+  right: 30px;
+  transition: all .35s ease .5s;
+}
+
+/* 2번 INPUT이 체크되면 1번 슬라이드의 오른쪽 화살표의 LEFT값이 변하면서 나타나도록 준 스타일 */
+.section_slide input[id="slide03"]:checked~.slidewrap li:nth-child(3) .left {
+  left: 30px;
+  transition: all .35s ease .5s;
+}
+
+/* 3번 INPUT이 체크되면 1번 슬라이드의 왼쪽 화살표의 LEFT값이 변하면서 나타나도록 준 스타일 */
+.section_slide input[id="slide03"]:checked~.slidewrap li:nth-child(3) .right {
+  right: 30px;
+  transition: all .35s ease .5s;
+}
+
+/* 3번 INPUT이 체크되면 1번 슬라이드의 오른쪽 화살표의 LEFT값이 변하면서 나타나도록 준 스타일 */
+/* 페이징 */
+
+.slide-pagelist>li {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.section input[id="slide01"]:checked~.slidewrap .slide-pagelist>li:nth-child(1)>label {
+  background: #999;
+}
+
+.section input[id="slide02"]:checked~.slidewrap .slide-pagelist>li:nth-child(2)>label {
+  background: #999;
+}
+
+.section input[id="slide03"]:checked~.slidewrap .slide-pagelist>li:nth-child(3)>label {
+  background: #999;
+}
+
+.slide-control > div {display:none;}
+.section_slide input[id="slide01"]:checked ~ .slidewrap .slidelist .slide-control > div:nth-child(1) {display:block;}
+.section_slide input[id="slide01"]:checked ~ .slidewrap .slidelist .slide-control > div:nth-child(2) {display:block;}
+.section_slide input[id="slide02"]:checked ~ .slidewrap .slidelist .slide-control > div:nth-child(3) {display:block;}
+.section_slide input[id="slide02"]:checked ~ .slidewrap .slidelist .slide-control > div:nth-child(4) {display:block;}
+.section_slide input[id="slide03"]:checked ~ .slidewrap .slidelist .slide-control > div:nth-child(5) {display:block;}
+.section_slide input[id="slide03"]:checked ~ .slidewrap .slidelist .slide-control > div:nth-child(6) {display:block;}
+.section_slide input[id="slide04"]:checked ~ .slidewrap .slidelist .slide-control > div:nth-child(7) {display:block;}
+.section_slide input[id="slide04"]:checked ~ .slidewrap .slidelist .slide-control > div:nth-child(8) {display:block;}
+
+.slide-pagelist {text-align:center;padding-top: 50px;}
+	.slide-pagelist > li {display:inline-block;vertical-align:middle;}
+	.slide-pagelist > li > label {display:block;padding:3px 20px;margin-left: 5px;margin-right: 5px;border-radius:30px;background:#ccc;cursor:pointer;}
+	.section_slide input[id="slide01"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(1) > label {background:#0d6efd;}
+	.section_slide input[id="slide02"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(2) > label {background:#0d6efd;}
+	.section_slide input[id="slide03"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(3) > label {background:#0d6efd;}
+	.section_slide input[id="slide04"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(4) > label {background:#0d6efd;}
+
+/* css */
+.card-box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 20px 30px;
+}
+
+.card-box .card{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border: none;
+  border-radius: 27px;
+  background: #e0e0e0;
+  box-shadow:  12px 12px 31px #a1a1a1,
+             -12px -12px 31px #ffffff;
+}
+
+.card-box .img-box{
+  width: 100px;
+  height: 100px;
+  background: #000;
+}
+
+.profile_box{
+  position: relative;
+  top: 5%;
+  left:23%;
+  width:200px;
+  height: 250px;
+}
+
+.profile_box .rounded-circle{
+  position: relative;
+  transform: translateX(5%) translateY(-105.5%);
+}
+
+  .modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .show {
+    display: block;
+  }
+
+  .modal_body {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    width: 30%;
+    height: auto;
+    padding-top: 20px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 10px;
+    box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.3);
+    transform: translateX(-50%) translateY(-50%);
+  }
+
+  .content p {
+    text-transform: capitalize;
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    font-family: 'Do Hyeon', sans-serif;
+  }
+
+  .title h1 {
+    padding: 0px;
+    margin-bottom: 15px;
+    text-transform: capitalize;
+    text-decoration: none;
+    color: black;
+    font-size: 40px;
+    font-family: 'Do Hyeon', sans-serif;
+  }
