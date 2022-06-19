@@ -3,12 +3,12 @@ ol, ul{
   padding:0;
 }
 
-header {
-  padding-top: 150px;
-  padding-bottom: 20px;
-}
+/* body{
+  display: flex;
+  z-index: 1;
+} */
 
-.header_container {
+header {
   position: fixed;
   top: 0;
   left: 0;
@@ -20,7 +20,7 @@ header {
   padding: 0px 250px;
 }
 
-.header_nav {
+main .header {
   width: 100%;
   height: 80px;
   /* padding: 10px; */
@@ -29,7 +29,7 @@ header {
   justify-content: space-between;
 }
 
-.header_nav a {
+.header a {
   text-decoration: none;
 }
 
@@ -41,14 +41,14 @@ header {
   font-family: 'Pacifico', cursive;
 }
 
-.header_nav .nav ul li {
+main .nav ul li {
   padding-top: 25px;
   display: inline-block;
   margin: 0 10px;
   font-size: 20px;
 }
 
-.header_nav .nav ul li a {
+main .nav ul li a {
   text-decoration: none;
   color: white;
 }
@@ -60,11 +60,16 @@ header {
   font-family: 'Patua One', cursive;
 }
 
-.header_nav .sticky {
-  z-index: .99;
+header.sticky {
+  z-index: 10;
   padding: 10px 170px;
   /* background:#1B0A2A; */
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.section_slide .bg-dark {
+  padding-top: 150px;
+  padding-bottom: 20px;
 }
 
 /* INPUT 가리기 */
@@ -214,6 +219,44 @@ header {
 	.section_slide input[id="slide03"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(3) > label {background:#0d6efd;}
 	.section_slide input[id="slide04"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(4) > label {background:#0d6efd;}
 
+/* css */
+.card-box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 20px 30px;
+}
+
+.card-box .card{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border: none;
+  border-radius: 27px;
+  background: #e0e0e0;
+  box-shadow:  12px 12px 31px #a1a1a1,
+             -12px -12px 31px #ffffff;
+}
+
+.card-box .img-box{
+  width: 100px;
+  height: 100px;
+  background: #000;
+}
+
+.profile_box{
+  position: relative;
+  top: 5%;
+  left:23%;
+  width:200px;
+  height: 250px;
+}
+
+.profile_box .rounded-circle{
+  position: relative;
+  transform: translateX(5%) translateY(-105.5%);
+}
 
   .modal {
     position: absolute;
