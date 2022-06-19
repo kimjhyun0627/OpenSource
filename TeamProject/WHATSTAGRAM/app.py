@@ -33,9 +33,11 @@ def main_page():
     for i in ids:
         if i != "":
             imgs.append('tag_folder/' + i + '/profile/profile.jpg')
+    print("////" * 20)
     print(imgs)
+    print(id_infos)
 
-    return render_template('main_semi.html', idList=ids, imgList=imgs)
+    return render_template('main_semi.html', idList=ids, imgList=imgs, id_infoList=id_infos)
 
 
 @app.route('/view', methods=['GET'])
@@ -72,7 +74,7 @@ def info_page():
     print("IMGS:")
     print(imgs)
 
-    return render_template('show_semi.html', id=word, tagList=tags, freqList=freqs, idList=ids, id_infoList=id_infos,
+    return render_template('show_final.html', id=word, tagList=tags, freqList=freqs, idList=ids, id_infoList=id_infos,
                            profile='tag_folder/' + word + '/profile/profile.jpg', imgList=imgs)
 
 
@@ -154,7 +156,7 @@ def instagram_crawler(ID):
         print("failed" * 20)
         body = {"tag": "", "freq": -1}
         es.index(index=word, document=body)
-        return -1, -1, -1
+        return -1, -1, -1, -1
 
     doc = {
         "name": word,
@@ -226,12 +228,12 @@ def instagram_crawler(ID):
     print(tag_freq)
 
     if len(tag_list) < 3:
-        for i in range(0, 3):
+        for i in range(0, 4):
             tag_list.append("")
             tag_freq.append(-1)
 
     if len(human_list) < 3:
-        for i in range(0, 3):
+        for i in range(0, 4):
             human_list.append("")
             human_freq.append(-1)
 
@@ -244,7 +246,7 @@ def instagram_crawler(ID):
     ids_info_list = ids_img_data_crawler(br, word, human_list[0:3])
 
     if len(ids_info_list) < 3:
-        for i in range(0, 3):
+        for i in range(0, 4):
             ids_info_list.append(["", "", -1, -1, -1])
 
     print(ids_info_list)
@@ -284,14 +286,16 @@ def instagram_crawler(ID):
 
 
 def ids_img_data_crawler(br, word, ids):
+    global temp
     print("=" * 30 + "idcrawler" + "=" * 30)
     ret = []
+    temp = []
     count = 3
     for id in ids:
         if id == "":
             continue
         suc = False
-        while suc != True and count >= 0:
+        while suc != True and count > 0:
             print(id)
             time.sleep(random.randrange(0, 2))
             count -= 1
@@ -311,7 +315,6 @@ def ids_img_data_crawler(br, word, ids):
             except:
                 continue
 
-            temp = []
             try:
                 des = soup.find('h2', 'profile-name-bottom').get_text()
                 followers = soup.find('span', 'followed_by').get_text()
@@ -326,6 +329,7 @@ def ids_img_data_crawler(br, word, ids):
                 continue
         ret.append(temp)
         print(temp)
+        temp = []
         if suc == False:
             return ret
     print(ret)
@@ -349,12 +353,12 @@ def list_alligner(sig, freq):
 
 def list_random_alligner(sig, freq):
     i = 0
-    while i < len(sig):
+    while i < len(sig) - 1:
         top = i
         bottom = i
         randList = []
         tmpList = []
-        j = top
+        j = top + 1
         while j < len(sig):
             j += 1
             if j == len(sig):
@@ -439,35 +443,44 @@ def es_ids_getter():
             follows = list(i[3].values())[5]
             idList.append(id)
             freqList.append(freq)
-            id_infoList.append([id_name, posts_count, followed_by, follows])
+            id_infoList.append([id, id_name, posts_count, followed_by, follows])
     except:
         freqList = [0, 0, 0, 0]
         idList = ["", "", "", ""]
         id_infoList = [["", "", -1, -1, -1], ["", "", -1, -1, -1], ["", "", -1, -1, -1], ["", "", -1, -1, -1]]
 
     if len(freqList) < 4:
-        for i in range(0, 4):
+        for i in range(0, 5):
             freqList.append(-1)
 
     if len(idList) < 4:
-        for i in range(0, 4):
+        for i in range(0, 5):
             idList.append("")
 
     if len(id_infoList) < 4:
-        for i in range(0, 4):
-            id_infoList.append(["","",-1,-1,-1])
+        for i in range(0, 5):
+            id_infoList.append(["", "", -1, -1, -1])
 
     idList, freqList = list_alligner(idList, freqList)
     idList, freqList = list_random_alligner(idList, freqList)
 
-    tmpList = id_infoList
-    for i in range(0,4):
-        id_infoList[i] = tmpList[idList.index(idList[i])]
+    tmpList = id_infoList.copy()
+    for i in range(0, 4):
+        if(idList[i]!=''):
+            id_infoList[i] = findIDX(tmpList, idList[i])
 
     print(idList)
     print(freqList)
+    print(tmpList)
     print(id_infoList)
     return idList[0:4], freqList[0:4], id_infoList
+
+
+def findIDX(List, name):
+    for i in List:
+        if i[0]!='':
+            if i[0] == name:
+                return i
 
 
 def es_freq_counter(word):
@@ -482,10 +495,6 @@ def es_freq_counter(word):
     print(freq)
     es.update(index="id", id=ID, doc={"name": name, "freq": freq + 1})
 
-
-# 오류1 : 글 자체가 없으면 findAll() 에러
-# 오류2 : 게시물 갯수가 적으면 에러
-# 오류3 : 비공계 처리 어떻게 할건지
 
 if __name__ == "__main__":
     app.run(debug=True)
