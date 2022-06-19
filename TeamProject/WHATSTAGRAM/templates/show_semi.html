@@ -49,7 +49,7 @@
                         <div class="row gx-5 align-items-center justify-content-center">
                             <div class="col-lg-8 col-xl-7 col-xxl-6">
                                 <div class="my-5 text-center text-xl-start">
-                                    <h1 class="display-1 fw-bolder text-white mb-5">{{id}}</h1>
+                                    <h1 class="display-1 fw-bolder text-white mb-5">@{{id}}</h1>
                                     <p class="fs-1 lead fw-normal text-white-50 mb-4">{{tagList[0]}} {{tagList[1]}} <br>
                                         {{tagList[2]}} {{tagList[3]}}</p>
                                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
@@ -69,17 +69,32 @@
                         <div class="row gx-5 align-items-center justify-content-center">
                             <div class="col-lg-8 col-xl-7 col-xxl-6">
                                 <div class="my-5 text-center text-xl-start">
-                                    <h1 class="display-1 fw-bolder text-white mb-5">{{tagList[0]}}</h1>
-                                    <h1 class="display-4 fw-bolder text-white mb-5">{{freqList[0]}}</h1>
+                                    <h1 class="display-1 fw-bolder text-white mb-5">
+                                        {% if tagList[0] != "" %}
+                                        {{tagList[0]}}
+                                        {% else %}
+                                        태그가 없습니다
+                                        {% endif %}
+                                    </h1>
+                                    <h1 class="display-4 fw-bolder text-white mb-5">
+                                        {% if freqList[0] != -1 %}
+                                        {{freqList[0]}}회 사용됨
+                                        {% endif %}
+                                    </h1>
                                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
-                                        <!-- <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Get Started</a> -->
-                                        <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
+                                        {% if tagList[1] != "" %}
+                                        <a class="btn btn-outline-light btn-lg px-4"
+                                           href="https://www.instagram.com/explore/tags/{{tagList[0][1:]}}"
+                                           target="_blank">Learn More</a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
+                            {% if imgList[0] != "" %}
                             <div class="col-xl-2 col-xxl-4 d-none d-xl-block text-center"><img
                                     class="img-fluid rounded-3 my-5" src="{{url_for('static',filename=imgList[0])}}"
                                     alt="..."/></div>
+                            {% endif %}
                         </div>
                     </div>
                 </li>
@@ -88,17 +103,33 @@
                         <div class="row gx-5 align-items-center justify-content-center">
                             <div class="col-lg-8 col-xl-7 col-xxl-6">
                                 <div class="my-5 text-center text-xl-start">
-                                    <h1 class="display-1 fw-bolder text-white mb-5">{{tagList[1]}}</h1>
-                                    <h1 class="display-4 fw-bolder text-white mb-5">{{freqList[1]}}</h1>
+                                    <h1 class="display-1 fw-bolder text-white mb-5">
+                                        {% if tagList[1] != "" %}
+                                        {{tagList[1]}}
+                                        {% else %}
+                                        태그가 없습니다
+                                        {% endif %}
+                                    </h1>
+                                    <h1 class="display-4 fw-bolder text-white mb-5">
+                                        {% if freqList[1] != -1 %}
+                                        {{freqList[1]}}회 사용됨
+                                        {% endif %}
+                                    </h1>
                                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
-                                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Get Started</a>
-                                        <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
+                                        {% if tagList[1] != "" %}
+                                        <a class="btn btn-outline-light btn-lg px-4"
+                                           href="https://www.instagram.com/explore/tags/{{tagList[1][1:]}}"
+                                           target="_blank">Learn More</a>
+                                        {% endif %}
+
                                     </div>
                                 </div>
                             </div>
+                            {% if imgList[1] != "" %}
                             <div class="col-xl-2 col-xxl-4 d-none d-xl-block text-center"><img
                                     class="img-fluid rounded-3 my-5" src="{{url_for('static',filename=imgList[1])}}"
                                     alt="..."/></div>
+                            {% endif %}
                         </div>
                     </div>
                 </li>
@@ -107,17 +138,32 @@
                         <div class="row gx-5 align-items-center justify-content-center">
                             <div class="col-lg-8 col-xl-7 col-xxl-6">
                                 <div class="my-5 text-center text-xl-start">
-                                    <h1 class="display-1 fw-bolder text-white mb-5">{{tagList[2]}}</h1>
-                                    <h1 class="display-4 fw-bolder text-white mb-5">{{freqList[2]}}</h1>
+                                    <h1 class="display-1 fw-bolder text-white mb-5">
+                                        {% if tagList[2] != "" %}
+                                        {{tagList[2]}}
+                                        {% else %}
+                                        태그가 없습니다
+                                        {% endif %}
+                                    </h1>
+                                    <h1 class="display-4 fw-bolder text-white mb-5">
+                                        {% if freqList[2] != -1 %}
+                                        {{freqList[2]}}회 사용됨
+                                        {% endif %}
+                                    </h1>
                                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
-                                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Get Started</a>
-                                        <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
+                                        {% if tagList[1] != "" %}
+                                        <a class="btn btn-outline-light btn-lg px-4"
+                                           href="https://www.instagram.com/explore/tags/{{tagList[2][1:]}}"
+                                           target="_blank">Learn More</a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
+                            {% if imgList[2] != "" %}
                             <div class="col-xl-2 col-xxl-4 d-none d-xl-block text-center"><img
                                     class="img-fluid rounded-3 my-5" src="{{url_for('static',filename=imgList[2])}}"
                                     alt="..."/></div>
+                            {% endif %}
                         </div>
                     </div>
                 </li>
@@ -172,29 +218,22 @@
                     <div class="card h-100 shadow border-0">
                         <div class="profile_box">
                             <img class="card-img" src="{{url_for('static', filename = 'img/rainbow.png')}}" alt="..."/>
-                            {% if imgList[4] %}
-                            <img src="{{url_for('static', filename = imgList[4])}}" style="width:90%" alt="..." class="rounded-circle text-center">
+                            {% if imgList[3] != "" %}
+                            <img src="{{url_for('static', filename = imgList[4])}}" style="width:90%" alt="..."
+                                 class="rounded-circle text-center">
                             {% endif %}
                         </div>
                         <div class="card-body p-4">
-                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div>
-                            <a class="text-decoration-none link-dark stretched-link" href="#!">
+                            <br>
+                            {% if imgList[3] != "" %}
+                            <a class="text-decoration-none link-dark stretched-link" href="http://localhost:5000/view?ID={{idList[0][1:]}}">
                                 <h3 class="card-title mb-3">{{idList[0]}}</h3>
                             </a>
                             <p class="card-text mb-0">Some quick example text to build on the card title and make up the
                                 bulk of the card's content.</p>
-                        </div>
-                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
-                            <div class="d-flex align-items-end justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d"
-                                         alt="..."/>
-                                    <div class="small">
-                                        <div class="fw-bold">Kelly Rowan</div>
-                                        <div class="text-muted">March 12, 2022 &middot; 6 min read</div>
-                                    </div>
-                                </div>
-                            </div>
+                            {% else %}
+                            <h3 class="card-title mb-3" style="text-align: center;">인물태그가 없습니다</h3>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -202,31 +241,20 @@
                     <div class="card h-100 shadow border-0">
                         <div class="profile_box">
                             <img class="card-img" src="{{url_for('static', filename='img/rainbow.png')}}" alt="..."/>
-                            {% if imgList[5] %}
+                            {% if imgList[4] != "" %}
                             <img src="{{url_for('static', filename = imgList[5])}}" style="width:90%" alt="..."
                                  class="rounded-circle text-center">
                             {% endif %}
                         </div>
                         <div class="card-body p-4">
-                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">Media</div>
-                            <a class="text-decoration-none link-dark stretched-link" href="#!">
+                            <br>
+                            {% if imgList[4] != "" %}
+                            <a class="text-decoration-none link-dark stretched-link" href="http://localhost:5000/view?ID={{idList[1][1:]}}">
                                 <h3 class="card-title mb-3">{{idList[1]}}</h3>
                             </a>
-                            <p class="card-text mb-0">This text is a bit longer to illustrate the adaptive height of
-                                each card. Some quick example text to build on the card title and make up the bulk of
-                                the card's content.</p>
-                        </div>
-                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
-                            <div class="d-flex align-items-end justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d"
-                                         alt="..."/>
-                                    <div class="small">
-                                        <div class="fw-bold">Josiah Barclay</div>
-                                        <div class="text-muted">March 23, 2022 &middot; 4 min read</div>
-                                    </div>
-                                </div>
-                            </div>
+                            {% else %}
+                            <h3 class="card-title mb-3" style="text-align: center;">인물태그가 없습니다</h3>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -234,29 +262,20 @@
                     <div class="card h-100 shadow border-0">
                         <div class="profile_box">
                             <img class="card-img" src="{{url_for('static', filename = 'img/rainbow.png')}}" alt="..."/>
-                            {% if imgList[6] %}
-                            <img src="{{url_for('static', filename = imgList[6])}}" style="width:90%" alt="..." class="rounded-circle text-center">
+                            {% if imgList[5] != "" %}
+                            <img src="{{url_for('static', filename = imgList[6])}}" style="width:90%" alt="..."
+                                 class="rounded-circle text-center">
                             {% endif %}
                         </div>
                         <div class="card-body p-4">
-                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div>
-                            <a class="text-decoration-none link-dark stretched-link" href="#!">
+                            <br>
+                            {% if imgList[5] != "" %}
+                            <a class="text-decoration-none link-dark stretched-link" href="http://localhost:5000/view?ID={{idList[2][1:]}}">
                                 <h3 class="card-title mb-3">{{idList[2]}}</h3>
                             </a>
-                            <p class="card-text mb-0">Some more quick example text to build on the card title and make
-                                up the bulk of the card's content.</p>
-                        </div>
-                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
-                            <div class="d-flex align-items-end justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d"
-                                         alt="..."/>
-                                    <div class="small">
-                                        <div class="fw-bold">Evelyn Martinez</div>
-                                        <div class="text-muted">April 2, 2022 &middot; 10 min read</div>
-                                    </div>
-                                </div>
-                            </div>
+                            {% else %}
+                            <h3 class="card-title mb-3" style="text-align: center;">인물태그가 없습니다</h3>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -271,10 +290,10 @@
                         <!-- <div class="text-white-50">Sign up for our newsletter for the latest updates.</div> -->
                     </div>
                     <div class="ms-xl-4">
-                        <form action="/view" method="post">
+                        <form action="/view" method="GET">
                             <div class="input-group mb-2">
                                 <input class="form-control" type="text" placeholder="Instagram ID"
-                                       aria-describedby="button-newsletter"/>
+                                       aria-describedby="button-newsletter" name="ID"/>
                                 <button class="btn btn-outline-light" id="button-newsletter" type="submit">Search
                                 </button>
                             </div>

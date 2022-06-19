@@ -25,9 +25,9 @@ es = Elasticsearch(hosts=es_host, timeout=30, max_retries=3, retry_on_timeout=Tr
 
 
 @app.route('/', methods=['GET'])
-def home():
-    create_tagfolder('static/tag_folder/')
-    ids, freqs = getid()
+def main_page():
+    tag_folder_creater('static/tag_folder/')
+    ids, freqs = es_ids_getter()
     imgs = []
     for i in ids:
         if i != "":
@@ -38,24 +38,32 @@ def home():
 
 
 @app.route('/view', methods=['GET'])
-def crawl():
+def info_page():
     word = request.args.get("ID")
-    if (create_tagfolder('static/tag_folder/' + word) == 0):
-        tags, freqs, ids = instagram_crawling(word)
+    if (tag_folder_creater('static/tag_folder/' + word) == 0):
+        tags, freqs, ids = instagram_crawler(word)
     else:
-        tags, freqs, ids = get_es(word)
+        tags, freqs, ids = es_data_getter(word)
         print(ids)
-        counter(word)
+        if(tags!=-1):
+            es_freq_counter(word)
+
+    # if tags==0 and freqs == 0 and ids == 0:
 
     if tags == -1 and freqs == -1 and ids == -1:
         return render_template('Error_show.html')
 
     imgs = []
     for t in tags:
-        imgs.append('tag_folder/' + word + '/' + t + '/tagIMG.jpg')
+        if t != "":
+            imgs.append('tag_folder/' + word + '/' + t + '/tagIMG.jpg')
+        else:
+            imgs.append("")
     for i in ids:
         if i != "":
             imgs.append('tag_folder/' + word + '/ids/' + i + '/profile.jpg')
+        else:
+            imgs.append("")
 
     print("IMGS:")
     print(imgs)
@@ -64,7 +72,7 @@ def crawl():
                            profile='tag_folder/' + word + '/profile/profile.jpg', imgList=imgs)
 
 
-def set_chrome_driver():
+def chrome_driver_setter():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('disable-gpu')
@@ -80,7 +88,7 @@ def set_chrome_driver():
     return driver
 
 
-def create_tagfolder(directory):
+def tag_folder_creater(directory):
     try:
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -89,18 +97,18 @@ def create_tagfolder(directory):
         return -1
 
 
-def create_index(word):
+def es_index_creater(word):
     if not es.indices.exists(index=word):
         return es.indices.create(index=word)
 
 
-def instagram_crawling(ID):
+def instagram_crawler(ID):
     word = str(ID)
     url = 'https://www.picuki.com/profile/' + word
 
     # chrome
     # br = webdriver.Chrome()
-    br = set_chrome_driver()
+    br = chrome_driver_setter()
     # br.set_window_size(1500, 1000)
 
     # br.implicitly_wait(20)
@@ -113,8 +121,6 @@ def instagram_crawling(ID):
         count -= 1
         try:
             br.get(url)
-            doc = {"name": word, "freq": 1}
-            es.index(index="id", document=doc)
             wait = WebDriverWait(br, 10)
             html = br.page_source
             soup = BeautifulSoup(html, 'lxml')
@@ -126,17 +132,19 @@ def instagram_crawling(ID):
             continue
 
     if suc == False:
-        body = {"tag": "", "freq": 0}
+        body = {"tag": "", "freq": -1}
         es.index(index=word, document=body)
         return -1, -1, -1
 
+    doc = {"name": word, "freq": 1}
+    es.index(index="id", document=doc)
     # print(id)
     tag_list = []
     human_list = []
     tag_freq = []
     human_freq = []
 
-    create_tagfolder(f'static/tag_folder/' + word + '/profile')
+    tag_folder_creater(f'static/tag_folder/' + word + '/profile')
     imgurl = profile.get("src")
     req = Request(imgurl, headers={'User-Agent': 'Mozilla/5.0'})
     with open(f'static/tag_folder/{word}/profile/profile.jpg', 'wb') as h:
@@ -144,7 +152,7 @@ def instagram_crawling(ID):
         h.write(img)
 
     n = 1
-    create_index(word)
+    es_index_creater(word)
     for i in post:
         try:
             list = i.get('alt').split()
@@ -155,7 +163,7 @@ def instagram_crawling(ID):
                         # 각 태그에 해당하는 디렉토리 생성(없을때만)
                         tag_list.append(j)
                         tag_freq.append(1)
-                        create_tagfolder(f'static/tag_folder/' + word + '/' + j)
+                        tag_folder_creater(f'static/tag_folder/' + word + '/' + j)
                         imgurl = i.get("src")
                         req = Request(imgurl, headers={'User-Agent': 'Mozilla/5.0'})
 
@@ -185,18 +193,18 @@ def instagram_crawling(ID):
     if len(tag_list) < 3:
         for i in range(0, 3):
             tag_list.append("")
-            tag_freq.append(0)
+            tag_freq.append(-1)
 
     if len(human_list) < 3:
         for i in range(0, 3):
             human_list.append("")
-            human_freq.append(0)
+            human_freq.append(-1)
 
-    tag_list, tag_freq = sortList(tag_list, tag_freq)
-    human_list, human_freq = sortList(human_list, human_freq)
+    tag_list, tag_freq = list_alligner(tag_list, tag_freq)
+    human_list, human_freq = list_alligner(human_list, human_freq)
 
-    tag_list, tag_freq = randList(tag_list, tag_freq)
-    human_list, human_freq = randList(human_list, human_freq)
+    tag_list, tag_freq = list_random_alligner(tag_list, tag_freq)
+    human_list, human_freq = list_random_alligner(human_list, human_freq)
 
     for i in range(0, len(tag_list)):
         body = {"tag": tag_list[i], "freq": tag_freq[i]}
@@ -214,7 +222,7 @@ def instagram_crawling(ID):
     print(human_list)
     print(human_freq)
 
-    id_crawler(br, word, human_list[0:3])
+    es_id_crawler(br, word, human_list[0:3])
 
     # br.close()
     br.quit()
@@ -225,7 +233,7 @@ def instagram_crawling(ID):
     # br.execute_script("window.scrollTo(0, 500);")
 
 
-def id_crawler(br, word, ids):
+def es_id_crawler(br, word, ids):
     print("=" * 50 + "idcrawler" + "=" * 50)
     suc = False
     count = 3
@@ -242,7 +250,7 @@ def id_crawler(br, word, ids):
                 soup = BeautifulSoup(html, 'lxml')
                 profile = soup.find('div', 'profile-avatar').find('img')
 
-                create_tagfolder(f'static/tag_folder/' + word + '/ids/' + id)
+                tag_folder_creater(f'static/tag_folder/' + word + '/ids/' + id)
                 imgurl = profile.get("src")
                 req = Request(imgurl, headers={'User-Agent': 'Mozilla/5.0'})
                 with open(f'static/tag_folder/{word}/ids/{id}/profile.jpg', 'wb') as h:
@@ -256,7 +264,7 @@ def id_crawler(br, word, ids):
             return -1
 
 
-def sortList(sig, freq):
+def list_alligner(sig, freq):
     for i in range(0, len(sig) - 1):
         idx = i
         for j in range(i + 1, len(sig)):
@@ -272,24 +280,28 @@ def sortList(sig, freq):
     return sig, freq
 
 
-def randList(sig, freq):
+def list_random_alligner(sig, freq):
     i = 0
     while i < len(sig):
         top = i
         bottom = i
-        check = False
         randList = []
         tmpList = []
-        for j in range(top + 1, len(sig)):
-            if freq[i] == freq[j]:
+        j = top
+        while j < len(sig):
+            j += 1
+            if j == len(sig):
+                return sig, freq
+            if freq[j] and freq[i] == freq[j]:
                 bottom = j
-                check = True
-        if check == False:
-            if freq[top] != freq[top + 1]:
-                i += 1
-                continue
-            else:
-                bottom = len(sig) - 1
+                break
+
+        if j == len(sig) - 1:
+            bottom = len(sig) - 1
+        elif freq[top] != freq[top + 1]:
+            i += 1
+            continue
+
         tmpList.append(sig[top:bottom + 1])
         print(tmpList)
         i = bottom + 1
@@ -308,7 +320,7 @@ def randList(sig, freq):
     return sig, freq
 
 
-def get_es(word):
+def es_data_getter(word):
     res = es.search(index=word, size=4)
 
     dicList = []
@@ -321,8 +333,13 @@ def get_es(word):
         dicList.append(dic)
         freqList.append(freq)
 
-    if dicList[0] == "" and freqList[0] == 0:
-        return -1, -1, -1
+    print("DICLIST:")
+    print(dicList)
+
+    if dicList[0] == "" and freqList[0] == -1:
+        if len(dicList) == 1:
+            print("!!!!!")
+            return -1, -1, -1
 
     res_id = es.search(index=f'{word}_ids', size=3)
     for i in res_id['hits']['hits']:
@@ -335,7 +352,7 @@ def get_es(word):
     return dicList, freqList, idList[0:3]
 
 
-def getid():
+def es_ids_getter():
     idList = []
     freqList = []
 
@@ -351,23 +368,23 @@ def getid():
         freqList = [0, 0, 0, 0]
         idList = ["", "", "", ""]
 
-    if len(freqList) < 4:
+    if len(freqList) < 5:
         for i in range(0, 4):
-            freqList.append(0)
+            freqList.append(-1)
 
-    if len(idList) < 4:
+    if len(idList) < 5:
         for i in range(0, 4):
             idList.append("")
 
-    idList, freqList = sortList(idList, freqList)
-    idList, freqList = randList(idList, freqList)
+    idList, freqList = list_alligner(idList, freqList)
+    idList, freqList = list_random_alligner(idList, freqList)
 
     print(idList)
     print(freqList)
     return idList[0:4], freqList[0:4]
 
 
-def counter(word):
+def es_freq_counter(word):
     res = es.search(index="id", body={"size": 1, 'query': {'match': {"name": word}}})
     res = list(res['hits']['hits'][0].values())
     print(res)
