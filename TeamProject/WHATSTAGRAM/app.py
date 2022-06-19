@@ -27,7 +27,8 @@ es = Elasticsearch(hosts=es_host, timeout=30, max_retries=3, retry_on_timeout=Tr
 @app.route('/', methods=['GET'])
 def main_page():
     tag_folder_creater('static/tag_folder/')
-    ids, freqs = es_ids_getter()
+    ids, freqs, id_infos = es_ids_getter()
+    print(id_infos)
     imgs = []
     for i in ids:
         if i != "":
@@ -41,20 +42,22 @@ def main_page():
 def info_page():
     word = request.args.get("ID")
     word = word.lower()
+
     if (tag_folder_creater('static/tag_folder/' + word) == 0):
-        tags, freqs, ids = instagram_crawler(word)
+        tags, freqs, ids, id_infos = instagram_crawler(word)
     else:
-        tags, freqs, ids = es_data_getter(word)
+        tags, freqs, ids, id_infos = es_data_getter(word)
         print(ids)
         if (tags != -1):
             es_freq_counter(word)
 
-    # if tags==0 and freqs == 0 and ids == 0:
+    print(id_infos)
 
     if tags == -1 and freqs == -1 and ids == -1:
         return render_template('Error_show.html')
 
     imgs = []
+
     for t in tags:
         if t != "":
             imgs.append('tag_folder/' + word + '/' + t + '/tagIMG.jpg')
@@ -69,7 +72,7 @@ def info_page():
     print("IMGS:")
     print(imgs)
 
-    return render_template('show_semi.html', id=word, tagList=tags, freqList=freqs, idList=ids,
+    return render_template('show_semi.html', id=word, tagList=tags, freqList=freqs, idList=ids, id_infoList=id_infos,
                            profile='tag_folder/' + word + '/profile/profile.jpg', imgList=imgs)
 
 
@@ -133,13 +136,34 @@ def instagram_crawler(ID):
             suc = False
             continue
 
+        temp = []
+        try:
+            des = soup.find('h2', 'profile-name-bottom').get_text()
+            followers = soup.find('span', 'followed_by').get_text()
+            following = soup.find('span', 'follows').get_text()
+            profile_post = soup.find('span', 'total_posts').get_text()
+            temp.append(word)
+            temp.append(des)
+            temp.append(profile_post)
+            temp.append(followers)
+            temp.append(following)
+        except:
+            continue
+
     if suc == False:
-        print("failed"*20)
+        print("failed" * 20)
         body = {"tag": "", "freq": -1}
         es.index(index=word, document=body)
         return -1, -1, -1
 
-    doc = {"name": word, "freq": 1}
+    doc = {
+        "name": word,
+        "freq": 1,
+        "profile_name": temp[1],
+        "post_count": temp[2],
+        "follower": temp[3],
+        "following": temp[4],
+    }
     es.index(index="id", document=doc)
     # print(id)
     tag_list = []
@@ -157,6 +181,7 @@ def instagram_crawler(ID):
     es_index_creater(word)
     for i in post:
         try:
+            print(i)
             list = i.get('alt').split()
             for j in list:
                 j = j.replace(',', '')
@@ -180,10 +205,10 @@ def instagram_crawler(ID):
 
                 elif '@' in j:
                     j = j.lower()
-                    if j[len(j)-1] == '.':
-                        j = j[:len(j)-1]
+                    if j[len(j) - 1] == '.':
+                        j = j[:len(j) - 1]
                     flag = False
-                    print("j: "+j)
+                    print("j: " + j)
                     print(human_list)
                     for human in human_list:
                         if j.lower() == human:
@@ -194,7 +219,7 @@ def instagram_crawler(ID):
                         human_list.append(j.lower())
                         human_freq.append(1)
         except:
-            print("EXCEPT"*20)
+            print("EXCEPT" * 20)
             continue
 
     print(tag_list)
@@ -216,37 +241,55 @@ def instagram_crawler(ID):
     tag_list, tag_freq = list_random_alligner(tag_list, tag_freq)
     human_list, human_freq = list_random_alligner(human_list, human_freq)
 
+    ids_info_list = ids_img_data_crawler(br, word, human_list[0:3])
+
+    if len(ids_info_list) < 3:
+        for i in range(0, 3):
+            ids_info_list.append(["", "", -1, -1, -1])
+
+    print(ids_info_list)
+
     for i in range(0, len(tag_list)):
-        body = {"tag": tag_list[i], "freq": tag_freq[i]}
+        body = {
+            "tag": tag_list[i],
+            "freq": tag_freq[i]
+        }
         print(body)
         es.index(index=word, document=body)
 
-    for i in range(0, len(human_list)):
-        body = {"tag": human_list[i], "freq": human_freq[i]}
+    for i in range(0, 3):
+        body = {
+            "tag": human_list[i],
+            "freq": human_freq[i],
+            "profile_name": ids_info_list[human_list.index(human_list[i])][1],
+            "post_count": ids_info_list[human_list.index(human_list[i])][2],
+            "follower": ids_info_list[human_list.index(human_list[i])][3],
+            "following": ids_info_list[human_list.index(human_list[i])][4]
+        }
         print(body)
         es.index(index=f'{word}_ids', document=body)
 
-    print(tag_list)
-    print(tag_freq)
-
-    print(human_list)
-    print(human_freq)
-
-    es_id_crawler(br, word, human_list[0:3])
+    # print(tag_list)
+    # print(tag_freq)
+    # print(human_list)
+    # print(human_freq)
 
     # br.close()
     br.quit()
 
-    return tag_list[0:4], tag_freq[0:4], human_list[0:3]
+    return tag_list[0:4], tag_freq[0:4], human_list[0:3], ids_info_list
 
     # 크롤링할 게시물 행 by 열 범위 지정
     # br.execute_script("window.scrollTo(0, 500);")
 
 
-def es_id_crawler(br, word, ids):
+def ids_img_data_crawler(br, word, ids):
     print("=" * 30 + "idcrawler" + "=" * 30)
+    ret = []
     count = 3
     for id in ids:
+        if id == "":
+            continue
         suc = False
         while suc != True and count >= 0:
             print(id)
@@ -258,7 +301,6 @@ def es_id_crawler(br, word, ids):
                 html = br.page_source
                 soup = BeautifulSoup(html, 'lxml')
                 profile = soup.find('div', 'profile-avatar').find('img')
-
                 tag_folder_creater(f'static/tag_folder/' + word + '/ids/' + id)
                 imgurl = profile.get("src")
                 req = Request(imgurl, headers={'User-Agent': 'Mozilla/5.0'})
@@ -267,10 +309,27 @@ def es_id_crawler(br, word, ids):
                     h.write(img)
                 suc = True
             except:
-                suc = False
                 continue
+
+            temp = []
+            try:
+                des = soup.find('h2', 'profile-name-bottom').get_text()
+                followers = soup.find('span', 'followed_by').get_text()
+                following = soup.find('span', 'follows').get_text()
+                profile_post = soup.find('span', 'total_posts').get_text()
+                temp.append(id)
+                temp.append(des)
+                temp.append(profile_post)
+                temp.append(followers)
+                temp.append(following)
+            except:
+                continue
+        ret.append(temp)
+        print(temp)
         if suc == False:
-            return -1
+            return ret
+    print(ret)
+    return ret
 
 
 def list_alligner(sig, freq):
@@ -333,15 +392,14 @@ def es_data_getter(word):
     dicList = []
     freqList = []
     idList = []
+    id_infoList = []
+
     for i in res['hits']['hits']:
         i = list(i.values())
         dic = list(i[3].values())[0]
         freq = list(i[3].values())[1]
         dicList.append(dic)
         freqList.append(freq)
-
-    print("DICLIST:")
-    print(dicList)
 
     if dicList[0] == "" and freqList[0] == -1:
         if len(dicList) == 1:
@@ -352,15 +410,22 @@ def es_data_getter(word):
         i = list(i.values())
         dic = list(i[3].values())[0]
         # freq = list(i[3].values())[1]
+        id_name = list(i[3].values())[2]
+        posts_count = list(i[3].values())[3]
+        followed_by = list(i[3].values())[4]
+        follows = list(i[3].values())[5]
         idList.append(dic)
+        id_infoList.append([dic, id_name, posts_count, followed_by, follows])
+
     print(idList)
 
-    return dicList, freqList, idList[0:3]
+    return dicList, freqList, idList[0:3], id_infoList
 
 
 def es_ids_getter():
     idList = []
     freqList = []
+    id_infoList = []
 
     try:
         res = es.search(index="id", size=10000)
@@ -368,26 +433,41 @@ def es_ids_getter():
             i = list(i.values())
             id = list(i[3].values())[0]
             freq = list(i[3].values())[1]
+            id_name = list(i[3].values())[2]
+            posts_count = list(i[3].values())[3]
+            followed_by = list(i[3].values())[4]
+            follows = list(i[3].values())[5]
             idList.append(id)
             freqList.append(freq)
+            id_infoList.append([id_name, posts_count, followed_by, follows])
     except:
         freqList = [0, 0, 0, 0]
         idList = ["", "", "", ""]
+        id_infoList = [["", "", -1, -1, -1], ["", "", -1, -1, -1], ["", "", -1, -1, -1], ["", "", -1, -1, -1]]
 
-    if len(freqList) < 5:
+    if len(freqList) < 4:
         for i in range(0, 4):
             freqList.append(-1)
 
-    if len(idList) < 5:
+    if len(idList) < 4:
         for i in range(0, 4):
             idList.append("")
+
+    if len(id_infoList) < 4:
+        for i in range(0, 4):
+            id_infoList.append(["","",-1,-1,-1])
 
     idList, freqList = list_alligner(idList, freqList)
     idList, freqList = list_random_alligner(idList, freqList)
 
+    tmpList = id_infoList
+    for i in range(0,4):
+        id_infoList[i] = tmpList[idList.index(idList[i])]
+
     print(idList)
     print(freqList)
-    return idList[0:4], freqList[0:4]
+    print(id_infoList)
+    return idList[0:4], freqList[0:4], id_infoList
 
 
 def es_freq_counter(word):
