@@ -27,11 +27,12 @@ es = Elasticsearch(hosts=es_host, timeout=30, max_retries=3, retry_on_timeout=Tr
 @app.route('/', methods=['GET'])
 def home():
     create_tagfolder('static/tag_folder/')
-    ids = getid()
+    ids, freqs = getid()
     imgs = []
     for i in ids:
-        if i != "-":
+        if i != "":
             imgs.append('tag_folder/' + i + '/profile/profile.jpg')
+    print(imgs)
 
     return render_template('main_semi.html', idList=ids, imgList=imgs)
 
@@ -39,15 +40,15 @@ def home():
 @app.route('/view', methods=['GET'])
 def crawl():
     word = request.args.get("ID")
-    tags = []
-    freqs = []
-    ids = []
     if (create_tagfolder('static/tag_folder/' + word) == 0):
         tags, freqs, ids = instagram_crawling(word)
     else:
         tags, freqs, ids = get_es(word)
         print(ids)
         counter(word)
+
+    if tags == -1 and freqs == -1 and ids == -1:
+        return render_template('Error_show.html')
 
     imgs = []
     for t in tags:
@@ -125,7 +126,9 @@ def instagram_crawling(ID):
             continue
 
     if suc == False:
-        return -1
+        body = {"tag": "", "freq": 0}
+        es.index(index=word, document=body)
+        return -1, -1, -1
 
     # print(id)
     tag_list = []
@@ -143,9 +146,6 @@ def instagram_crawling(ID):
     n = 1
     create_index(word)
     for i in post:
-        # time.sleep(2)
-        # br.execute_script("window.scrollTo(0, 500);")
-
         try:
             list = i.get('alt').split()
             for j in list:
@@ -175,11 +175,9 @@ def instagram_crawling(ID):
                     else:
                         human_list.append(j)
                         human_freq.append(1)
+                print("=" * 80)
         except:
             continue
-
-        # print(i.get("src"))
-        print("=" * 80)
 
     print(tag_list)
     print(tag_freq)
@@ -323,6 +321,9 @@ def get_es(word):
         dicList.append(dic)
         freqList.append(freq)
 
+    if dicList[0] == "" and freqList[0] == 0:
+        return -1, -1, -1
+
     res_id = es.search(index=f'{word}_ids', size=3)
     for i in res_id['hits']['hits']:
         i = list(i.values())
@@ -348,7 +349,7 @@ def getid():
             freqList.append(freq)
     except:
         freqList = [0, 0, 0, 0]
-        idList = ["-", "-", "-", "-"]
+        idList = ["", "", "", ""]
 
     if len(freqList) < 4:
         for i in range(0, 4):
@@ -356,14 +357,14 @@ def getid():
 
     if len(idList) < 4:
         for i in range(0, 4):
-            idList.append("-")
+            idList.append("")
 
     idList, freqList = sortList(idList, freqList)
     idList, freqList = randList(idList, freqList)
 
     print(idList)
     print(freqList)
-    return idList[0:4]
+    return idList[0:4], freqList[0:4]
 
 
 def counter(word):

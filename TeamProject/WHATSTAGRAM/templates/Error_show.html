@@ -11,7 +11,7 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="error_style.css">
+        <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/error_style.css')}}">
         <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Nanum+Brush+Script&family=Pacifico&family=Parisienne&family=Patua+One&display=swap" rel="stylesheet">
 
     </head>
@@ -19,11 +19,11 @@
         <!-- Responsive navbar-->
         <header>
             <div class="header">
-              <a href="#" onclick="location.href='main_semi.html'"><span class="title" style="font-size:3em">#</span>
+              <a href="#" onclick="location.href='http://localhost:5000/'"><span class="title" style="font-size:3em">#</span>
                 <span class="title" style="font-size:2em">Whatstagram</span></a>
               <div class="nav">
                 <ul>
-                  <li class="text"><a href="#" onclick="location.href='main_semi.html'">HOME</a></li>
+                  <li class="text"><a href="#" onclick="location.href='http://localhost:5000/'">HOME</a></li>
                   <li class="text"><a href="#" onclick="modalBrowse()">CONTACT</a></li>
                 </ul>
               </div>
@@ -31,7 +31,7 @@
           </header>
         <!-- Page content-->
         <div class="container">
-          <img src="img/rock.png" style="float:right;margin-right:150px;"alt="">
+          <img src="url_for{'static', filename = 'img/rock.png')" style="float:right;margin-right:150px;"alt="">
             <div class="flex-colum mt-5">
                 <h1 style="font-family: 'Do Hyeon', sans-serif; color:#045FB4;font-size:3em;">죄송합니다.</h1>
                 <h1 style="font-family: 'Do Hyeon', sans-serif;"> 비공개 계정으로 분석이 불가능합니다.</h1>
@@ -39,7 +39,7 @@
                 <p><h4 style="font-family: 'Do Hyeon', sans-serif; color: grey;">이전 페이지로 돌아가서 다시 검색해주세요.</h4><br>
                 <!-- <img src="https://mblogthumb-phinf.pstatic.net/MjAxODAyMjRfMTE3/MDAxNTE5NDQ3OTg5NTI1.m2NFDOBCBFQ9hTdJyr7ou2M9nmnhAYCGRCGF4nklj0kg.94aKotDhgo_VuqjmzVhGNEF3Y1Th2iW_GbFnVeOqf24g.JPEG.ifixph/%EC%9A%B0%EB%8A%94_%EB%9D%BC%EC%9D%B4%EC%96%B8.jpg?type=w800" alt="CryingLion"   > -->
 
-                <button type="button"  onclick="location.href='main_semi.html'" class="btn btn-secondary btn-lg"><p style="font-family: 'Do Hyeon', sans-serif; margin:0 !important;">이전페이지</p></button>
+                <button type="button"  onclick="location.href='http://localhost:5000/'" class="btn btn-secondary btn-lg"><p style="font-family: 'Do Hyeon', sans-serif; margin:0 !important;">이전페이지</p></button>
 
             </div>
 
