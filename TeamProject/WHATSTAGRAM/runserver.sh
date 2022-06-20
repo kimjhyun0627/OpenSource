@@ -15,17 +15,17 @@ chmod 700 runbrowser.sh
 gnome-terminal -e ./runelasticsearch.sh
 
 # 설치파일 받기 -> 나중에 살리기
-#wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
 # 크롬 설치 -> 나중에 살리기
-#echo "$PW" | sudo -kS apt install ./google-chrome-stable_current_amd64.deb
+echo "$PW" | sudo -kS apt install ./google-chrome-stable_current_amd64.deb
 
 # 크롬 버전 확인
 google-chrome --version
 
 
-#echo "$PW" | sudo -kS apt install software-properties-common
-#echo "$PW" | sudo -kS apt install python3.9
+echo "$PW" | sudo -kS apt install software-properties-common
+echo "$PW" | sudo -kS apt install python3.9
 
 echo "$PW" | sudo -kS apt install python3-pip build-essential
 
