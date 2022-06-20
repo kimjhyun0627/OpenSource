@@ -1,10 +1,10 @@
-#README
+# README
 ***
-##인스타그램 태그 크롤링 사이트
-####Linux 기반의 Shell, Python, Flask, Elasticsearch 및 Selenium, BeautifulSoup4를 사용한 웹 서비스입니다.
-####대중적으로 사용하는 SNS인 인스타그램(instagram)으로부터 유명인사 및 지인들의 태그(#), 계정 태그(@) 빈도수를 분석하고 저장하는 웹 서비스입니다.
+## 인스타그램 태그 크롤링 사이트
+#### Linux 기반의 Shell, Python, Flask, Elasticsearch 및 Selenium, BeautifulSoup4를 사용한 웹 서비스입니다.
+#### 대중적으로 사용하는 SNS인 인스타그램(instagram)으로부터 유명인사 및 지인들의 태그(#), 계정 태그(@) 빈도수를 분석하고 저장하는 웹 서비스입니다.
 ***
-###실행 방법
+### 실행 방법
 
 1. runserver.sh를 통해 서비스 실행 시 필요한 프로그램과 모듈을 설치합니다. 이 과정에서, Elasticsearch가 실행됩니다.
 2. 추가 모듈들이 모두 설치된다면, 서비스가 설치한 chrome browser를 통해 열립니다.
