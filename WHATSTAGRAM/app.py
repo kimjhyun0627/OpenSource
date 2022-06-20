@@ -377,8 +377,7 @@ def es_data_getter(word):
         freqList.append(freq)
 
     if dicList[0] == "" and freqList[0] == -1:
-        if len(dicList) == 1:
-            return -1, -1, -1, -1
+        return -1, -1, -1, -1
 
     res_id = es.search(index=f'{word}_ids', size=3)
     for i in res_id['hits']['hits']:
