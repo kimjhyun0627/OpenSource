@@ -23,13 +23,17 @@ gnome-terminal -e ./runelasticsearch.sh
 # 크롬 버전 확인
 google-chrome --version
 
-pip install webdriver-manager
 
 #echo "$PW" | sudo -kS apt install software-properties-common
 #echo "$PW" | sudo -kS apt install python3.9
 
 echo "$PW" | sudo -kS apt install python3-pip build-essential
-echo "$PW" | pip install requests
+
+pip install webdriver-manager
+pip install requests
+pip install beautifulsoup4
+pip install konlpy
+pip install datetime
 
 #echo "$PW" | sudo -kS apt-get update
 #echo "$PW" | sudo -kS apt-get upgrade -y
